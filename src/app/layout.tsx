@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "./Navbar";
 import Aside from "./Aside";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -35,7 +35,7 @@ export default function RootLayout({
       </head>
 
       <body className="min-h-screen h-screen min-w-full w-full max-w-full flex flex-col">
-        <div className="fixed z-0 top-0 h-screen w-screen bg-center bg-cover" style={{backgroundImage: `url(${background.src})`}}></div>
+        <div className="fixed z-0 top-0 h-screen w-screen bg-center bg-cover" style={{ backgroundImage: `url(${background.src})` }}></div>
         <Navbar />
 
         <main className="flex h-full w-full min-w-full max-w-full">
@@ -53,3 +53,4 @@ export default function RootLayout({
     </html>
   );
 }
+//hello world
