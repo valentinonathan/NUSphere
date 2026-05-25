@@ -7,7 +7,7 @@ import { FaBook } from "react-icons/fa";
 
 export default function Aside() {
     return (
-        <aside className="fixed pt-6.5 px-6.5 min-h-full min-w-42 w-42 max-w-42 overflow-clip shadow-md bg-gradient-to-b from-primary/70 from-0% via-secondary/40 via-110% to-secondary/40 to-100%" style={{boxShadow:"10px 0 24px rgba(0,0,0,0.2)"}}>
+        <aside className="fixed pt-6.5 px-6.5 min-h-full min-w-42 w-42 max-w-42 overflow-clip shadow-md bg-gradient-to-b from-primary/60 from-0% via-secondary/40 via-110% to-secondary/40 to-100%" style={{boxShadow:"10px 0 24px rgba(0,0,0,0.2)"}}>
             <nav className="flex flex-col gap-11 items-start">
                 <a href="/">
                 <div className="flex items-center gap-5 hover:cursor-pointer text-white hover:text-white/60">

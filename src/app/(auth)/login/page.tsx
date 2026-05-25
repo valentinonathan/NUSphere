@@ -25,7 +25,7 @@ export default function Login() {
                     <input type="password" name="password" className="bg-white/20 p-1.5 w-80 rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your password..."></input>
                 </div>
                 <p className="text-center">Do not have an account yet? <a className="underline hover:cursor-pointer">Sign Up</a></p>
-                <button className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
+                <button type="submit" className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
             </form>
             </div>
         </div>
