@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import AvatarWithOnline from "@/components/avatarWithOnline";
 import Search from "@/components/search";
-import logo from "../../public/NUSPHERE Logo.png";
+import logo from "../../../public/NUSPHERE Logo.png";
 
 export default function Navbar() {
     return (

@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto, Montserrat, Inter } from "next/font/google";
-import background from "../../public/home_background.png";
 import "./globals.css";
 import { cn } from "@/lib/utils";
-
-
-import Navbar from "./Navbar";
-import Aside from "./Aside";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -33,24 +28,10 @@ export default function RootLayout({
       <head>
         <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet" />
       </head>
-
       <body className="min-h-screen min-w-full w-full max-w-full flex flex-col">
-        <div className="fixed z-0 top-0 h-screen w-screen bg-center bg-cover" style={{ backgroundImage: `url(${background.src})` }}></div>
-        <Navbar />
-
-        <main className="flex h-full w-full min-w-full max-w-full">
-
-          <Aside />
-
-          <div className="z-1 p-3 ml-42 flex-1 min-h-screen w-full text-white">
-            {children}
-          </div>
-
-        </main>
-
+        {children}
       </body>
-
     </html>
   );
 }
-//hello world + change here
+

@@ -1,4 +1,4 @@
-import post from "../../public/post-dummy.png";
+import post from "../../../public/post-dummy.png";
 import { IoChatbubble } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
@@ -8,7 +8,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import GroupAvatar from "@/components/groupAvatar";
-import profile from "../../public/Profile.png";
+import profile from "../../../public/Profile.png";
 
 export default function Post() {
     return (
