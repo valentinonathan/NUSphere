@@ -34,7 +34,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&display=swap" rel="stylesheet" />
       </head>
 
-      <body className="min-h-screen h-screen min-w-full w-full max-w-full flex flex-col">
+      <body className="min-h-screen min-w-full w-full max-w-full flex flex-col">
         <div className="fixed z-0 top-0 h-screen w-screen bg-center bg-cover" style={{ backgroundImage: `url(${background.src})` }}></div>
         <Navbar />
 
@@ -42,7 +42,7 @@ export default function RootLayout({
 
           <Aside />
 
-          <div className="z-1 p-3 ml-42 flex-1 min-h-screen text-white ">
+          <div className="z-1 p-3 ml-42 flex-1 min-h-screen w-full text-white">
             {children}
           </div>
 
