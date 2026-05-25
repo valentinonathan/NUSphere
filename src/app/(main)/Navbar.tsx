@@ -5,7 +5,7 @@ import logo from "../../../public/NUSPHERE Logo.png";
 
 export default function Navbar() {
     return (
-        <header className="sticky top-0 z-100 p-5 min-h-17 h-17 max-h-17 flex justify-between items-center shadow-black/10 shadow-md bg-gradient-to-r from-primary/40 from-0% via-secondary/40 via-110% to-secondary/40 to-100% backdrop-blur-md">
+        <header className="sticky top-0 z-100 p-5 min-h-17 h-17 max-h-17 flex justify-between items-center shadow-black/10 shadow-md bg-gradient-to-r from-primary/70 from-0% via-secondary/40 via-110% to-secondary/40 to-100% backdrop-blur-md">
             <div className="h-12 flex gap-3 items-center">
                 <img src={logo.src} className="h-full w-auto rounded-md object-contain"></img>
                 <h1 className="font-momo text-2xl text-white">NUSphere</h1>
