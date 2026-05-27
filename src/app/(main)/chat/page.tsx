@@ -77,6 +77,53 @@ const initialConversations: Conversation[] = [
         lastMessage: "See you at the airport.",
         time: "Friday",
     },
+     // New Conversations
+
+    {
+        id: "9",
+        name: "Lucas Brown",
+        lastMessage: "Did you finish the assignment?",
+        time: "11:24 AM",
+        unreadCount: 3,
+    },
+    {
+        id: "10",
+        name: "Sarah Chen",
+        lastMessage: "Coffee later today?",
+        time: "10:17 AM",
+    },
+    {
+        id: "11",
+        name: "Frontend Team",
+        lastMessage: "Deployment completed successfully.",
+        time: "09:50 AM",
+    },
+    {
+        id: "12",
+        name: "Olivia Davis",
+        lastMessage: "I'll call you tonight.",
+        time: "Yesterday",
+        unreadCount: 1,
+    },
+    {
+        id: "13",
+        name: "Gaming Squad",
+        lastMessage: "Who's online right now?",
+        time: "Yesterday",
+        unreadCount: 6,
+    },
+    {
+        id: "14",
+        name: "Daniel Garcia",
+        lastMessage: "The API issue is fixed.",
+        time: "Tuesday",
+    },
+    {
+        id: "15",
+        name: "UI/UX Group",
+        lastMessage: "New design system proposal shared.",
+        time: "Tuesday",
+    },
 ];
 
 const initialMessages: MessageHistory = {
@@ -170,7 +217,7 @@ const page = () => {
     }
 
     return (
-        <div className="flex h-screen bg-background text-foreground">
+        <div className="flex h-screen bg-background text-foreground overflow-hidden">
             <aside className="w-72 shrink-0 border-r border-border bg-card p-4">
                 <div className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     Conversations

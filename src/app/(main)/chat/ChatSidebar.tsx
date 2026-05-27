@@ -10,7 +10,7 @@ type ChatSidebarProps = {
 
 const ChatSidebar = ({ conversations, activeConversationId, onSelectConversation }: ChatSidebarProps) => {
     return (
-        <div className="space-y-2">
+        <div className="flex flex-col h-full overflow-y-auto space-y-2">
             {conversations.map((conversation) => {
                 const isActive = conversation.id === activeConversationId
                 return (
