@@ -18,7 +18,9 @@ export default function Navbar() {
                     <Button className="rounded-md max-h-8.5 border-none font-roboto bg-black/30 hover:bg-black/40 backdrop-blur-3xl hover:cursor-pointer">Log In</Button>
                 </a>
                 <Button className="rounded-md max-h-8.5 border-none font-roboto bg-black/20 hover:bg-black/30 hover:cursor-pointer">Sign Up</Button>
-                <AvatarWithOnline size="2.5"/>
+                <a href="/_valentino_nathan">
+                    <AvatarWithOnline size="2.5"/>
+                </a>
             </div>
         </header>
     );
