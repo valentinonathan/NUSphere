@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import ChatSidebar from "./ChatSidebar"
 import ChatWindow from "./ChatWindow"
 import ChatInput from "./ChatInput"
+import styles from "./chat.module.css"
 
 export type Conversation = {
     id: string;
@@ -217,8 +218,8 @@ const page = () => {
     }
 
     return (
-        <div className="flex h-screen bg-background text-foreground overflow-hidden">
-            <aside className="w-72 shrink-0 border-r border-border bg-card p-4">
+        <div className={`flex h-screen text-foreground overflow-hidden`}>
+            <aside className="w-72 shrink-0 border-r p-4 bg-white/30">
                 <div className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                     Conversations
                 </div>
@@ -229,12 +230,12 @@ const page = () => {
                 />
             </aside>
 
-            <div className="flex flex-1 flex-col">
+            <div className="flex flex-1 flex-col bg-white/30">
                 <main className="flex-1 overflow-hidden">
                     <ChatWindow conversation={activeConversation} messages={activeMessages} />
                 </main>
 
-                <footer className="border-t border-border bg-background px-4 py-3">
+                <footer className="border-t border-border px-4 py-3">
                     <ChatInput onSendMessage={sendMessage} />
                 </footer>
             </div>

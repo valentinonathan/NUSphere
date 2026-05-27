@@ -8,7 +8,7 @@ type ChatWindowProps = {
 
 const ChatWindow = ({ conversation, messages }: ChatWindowProps) => {
     return (
-        <div className="flex h-full flex-col bg-background">
+        <div className="flex h-full flex-col">
             <div className="border-b border-border px-6 py-4">
                 <div className="text-lg font-semibold">{conversation.name}</div>
                 <div className="mt-1 text-sm text-muted-foreground">{conversation.lastMessage}</div>
