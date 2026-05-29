@@ -87,6 +87,23 @@ const page = () => {
     router.push("/events")
   }
 
+  const handleDelete = () => {
+    if (!eventId) {
+      setError("No event selected for deletion.")
+      return
+    }
+
+    // confirm deletion with the user
+    const ok = confirm("Are you sure you want to delete this event? This cannot be undone.")
+    if (!ok) return
+
+    const stored = localStorage.getItem(STORAGE_KEY)
+    const events = stored ? JSON.parse(stored) : []
+    const updatedEvents = events.filter((item: any) => item.id !== eventId)
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedEvents))
+    router.push("/events")
+  }
+
   if (!loaded) {
     return <div>Loading event...</div>
   }
@@ -164,6 +181,13 @@ const page = () => {
             className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
           >
             Cancel
+          </button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="ml-auto rounded-md border border-red-400 bg-white px-4 py-2 text-sm font-semibold text-red-600 hover:bg-red-50"
+          >
+            Delete
           </button>
         </div>
       </form>
