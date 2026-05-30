@@ -2,6 +2,7 @@ import AvatarWithOnline from "@/components/avatarWithOnline";
 import { MdOutlineHomeWork } from "react-icons/md";
 import { IoGlobeOutline } from "react-icons/io5";
 import { TabGroup } from "@/components/tabgroup";
+import post from "../../../../public/post-dummy.png";
 
 export default async function ProfileLayout({
   children, 
@@ -15,7 +16,7 @@ export default async function ProfileLayout({
 
     return (
         <div className="flex justify-center min-w-full pt-10">
-        <div className="">
+        <div className="flex flex-col gap-10 justify-center items-center">
 
           <div className="flex gap-10 min-h-max max-w-180">
             <div className="min-h-full min-w-max flex flex-col justify-between">
@@ -48,8 +49,13 @@ export default async function ProfileLayout({
             </div>
           </div>
 
-          <div className="">
-            
+          <div className="grid grid-cols-3 max-w-200 gap-1">
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
           </div>
 
         </div>
