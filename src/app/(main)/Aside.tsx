@@ -36,12 +36,14 @@ export default function Aside() {
                 </div>
                 </a>
 
+                <a href="/events">
                 <div className="flex items-center gap-5 justify-around hover:cursor-pointer text-white hover:text-white/60">
                     <div className="min-w-8 min-h-8 flex justify-center items-center">
                         <BsCalendar3EventFill className="text-[158%]" />
                     </div>
                     <h1 className="">Events</h1>
                 </div>
+                </a>
 
                 <div className="flex items-center gap-5 justify-around hover:cursor-pointer text-white hover:text-white/60">
                     <div className="min-w-8 min-h-8 flex justify-center items-center">
