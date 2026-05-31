@@ -14,12 +14,16 @@ export default function Post() {
     return (
         <div className="flex flex-col gap-2 min-w-110 w-110 max-w-110 max-h-500 px-3 pt-3 pb-5 shadow-black/10 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
             <div className="flex gap-2 items-center">
+                <a href="/_valentino_nathan_">
                 <Avatar className="h-9.5 w-auto">
                     <AvatarImage src={profile.src} className=""/>
                 </Avatar>
+                </a>
+                <a href="/_valentino_nathan">
                 <h2 className="font-semibold">
                     Valentino Nathan
                 </h2>
+                </a>
             </div>
 
             <img src={post.src} className="bg-center bg-cover rounded-sm"></img>
