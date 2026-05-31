@@ -26,7 +26,7 @@ export default function FindPeople() {
                     </button>
                 </div>
             </div>
-            <button type="submit" className="min-w-20 bg-secondary/70 p-2 rounded-sm shadow-md shadow-black/10 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Find</button>
+            <button type="submit" className="min-w-20 bg-pink-500 p-2 rounded-sm shadow-md shadow-black/10 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Find</button>
         </div>
     );
 }
