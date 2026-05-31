@@ -7,9 +7,8 @@ import { IoAdd } from "react-icons/io5";
 export default function FindPeople() {
     const options: string[] = ["Faculty", "Major", "Residence", "Year", "Nationality"];
     const [filters, setFilters] = useState<string[][]>([[crypto.randomUUID(), "", ""], [crypto.randomUUID(), "", ""], [crypto.randomUUID(), "", ""]]);
-    function callbackFilters(filters: string[][], options: string[]): void {
+    function callbackFilters(filters: string[][]): void {
         setFilters(filters);
-        console.log(filters);
     }
     function addFilters() {
         setFilters(f => [...f, [crypto.randomUUID(), "", ""]]);

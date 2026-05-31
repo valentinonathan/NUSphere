@@ -2,7 +2,7 @@ import Dropdown from "@/components/dropdown";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 
-export default function FilterPeople({identifier, options, filters, callback}: {identifier: string; options: string[]; filters: string[][]; callback: (filters: string[][], options: string[]) => void;}) {
+export default function FilterPeople({identifier, options, filters, callback}: {identifier: string; options: string[]; filters: string[][]; callback: (filters: string[][]) => void;}) {
 
     const choices: {Faculty: string[]; Major: string[]; Residence: string[]; Year: string[]; Nationality: string[];} = {
         Faculty: ["Business School", "School of Computing", "Dentistry", "Design and Engineering", "Humanities and Sciences", "Law", "School of Medicine", "Music", "Public Health", "NUS College", "NUS Graduate School", "SCALE", "Public Policy"],

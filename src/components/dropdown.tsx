@@ -14,7 +14,7 @@ export default function Dropdown({
     identifier: string;
     options: string[];
     filters: string[][];
-    callback: (filters: string[][], options: string[]) => void;
+    callback: (filters: string[][]) => void;
     isChoices: boolean;
 }) {
 
