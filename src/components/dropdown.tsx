@@ -47,9 +47,11 @@ export default function Dropdown({
         <SelectGroup>
           <SelectLabel>{isChoices ? filters?.filter(f => f?.[0] == identifier)?.[0]?.[1] : "Criteria"}</SelectLabel>
           {
-            // @ts-ignore
             isChoices 
-              ? choices?.[filters?.filter(f => f?.[0] == identifier)?.[0]?.[1]]?.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)
+              ? (
+                  // @ts-ignore
+                  choices?.[filters?.filter(f => f?.[0] == identifier)?.[0]?.[1]]?.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)
+                )
               : options?.map(o => <SelectItem key={o} value={o}>{o}</SelectItem>)
           }
         </SelectGroup>
