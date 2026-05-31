@@ -4,7 +4,7 @@ import type { PostProps } from "./page"
 
 const EventPost = ({ id, title, user, imageURL, date, description }: PostProps) => {
   return (
-    <div className="max-w-200 border-2 border-pink-400 bg-gray-200/30 rounded-md p-4">
+    <div className="max-w-200 shadow-black/10 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold">{title}</h2>

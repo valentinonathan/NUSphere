@@ -73,7 +73,7 @@ const page = () => {
           placeholder="Search events..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="border p-2 rounded-md w-full max-w-md"
+          className="p-2 rounded-md w-full max-w-md bg-black/20 shadow-black/20 shadow-md"
         />
         <Link
           href="/events/create"
