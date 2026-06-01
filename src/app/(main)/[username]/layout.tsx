@@ -50,12 +50,24 @@ export default async function ProfileLayout({
           </div>
 
           <div className="grid grid-cols-3 max-w-200 gap-1">
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
+            <a href="/post">
             <img src={post.src} className="aspect-[4/5] w-full object-cover" />
+            </a>
           </div>
 
         </div>

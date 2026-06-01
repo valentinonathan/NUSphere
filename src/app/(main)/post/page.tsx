@@ -16,8 +16,12 @@ export default function PostPage() {
                 </div>
                 <div className="flex-1 min-h-full flex flex-col justify-between">
                     <div className="flex gap-2 items-center px-2 min-h-15 max-h-15 min-w-full rounded-tr-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
+                        <a href="/_valentino_nathan_">
                         <AvatarWithOnline size="2.5"/>
+                        </a>
+                        <a href="_valentino_nathan_">
                         <h1>Valentino Nathan</h1>
+                        </a>
                     </div>
                     <div className="flex-1 max-h-107 overflow-y-auto p-2 bg-black/10 no-scrollbar">
                         <Comment />
