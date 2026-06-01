@@ -1,4 +1,4 @@
-import post from "../../../public/post-dummy.png";
+import post from "../../../../public/post-dummy.png";
 import { IoChatbubble } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
@@ -8,7 +8,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import GroupAvatar from "@/components/groupAvatar";
-import profile from "../../../public/Profile.png";
+import profile from "../../../../public/Profile.png";
 
 export default function Post() {
     return (
@@ -33,10 +33,12 @@ export default function Post() {
                     <FaHeart className="text-[165%]"/>
                     10k
                 </div>
+                <a href="/post">
                 <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
                     <IoChatbubble className="text-[165%]"/>
                     3k
                 </div>
+                </a>
                 <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
                     <IoSend className="text-[165%]"/>
                 </div>

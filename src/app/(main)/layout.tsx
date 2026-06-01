@@ -19,7 +19,7 @@ export default function HomeRootLayout({
 
       <Aside />
 
-      <div className="z-1 p-3 ml-42 flex-1 min-h-screen w-full text-white">
+      <div className="z-1 p-3 ml-42 flex-1 w-full min-h-max text-white">
         {children}
       </div>
 
