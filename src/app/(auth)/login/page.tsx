@@ -15,7 +15,7 @@ export default function Login() {
         <div className="z-1 flex-1 min-w-full min-h-full h-full w-full">
             <div className="absolute right-0 flex text-white items-center justify-center min-w-125 min-h-full backdrop-blur rounded-l-md bg-gradient-to-b from-primary/50 from-0% via-primary/70 via-110% to-primary/50 to-100%">
             <form name="login" method="post" className="flex flex-col gap-6">
-                <h1 className="text-2xl font-semibold text-center">Login</h1>
+                <h1 className="text-2xl font-momo text-center">Login</h1>
                 <div className="flex flex-col gap-2">
                     <label>Username:</label>
                     <input type="text" name="username" className="bg-white/20 p-1.5 w-80 rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your username..."></input>
