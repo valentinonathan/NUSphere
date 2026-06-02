@@ -17,14 +17,14 @@ export default function Login() {
             <form name="login" method="post" className="flex flex-col gap-6">
                 <h1 className="text-2xl font-momo text-center">Login</h1>
                 <div className="flex flex-col gap-2">
-                    <label>Username:</label>
+                    <label>Username</label>
                     <input type="text" name="username" className="bg-white/20 p-1.5 w-80 rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your username..."></input>
                 </div>
                 <div className="flex flex-col gap-2">
                     <label>Password</label>
                     <input type="password" name="password" className="bg-white/20 p-1.5 w-80 rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your password..."></input>
                 </div>
-                <p className="text-center">Do not have an account yet? <a className="underline hover:cursor-pointer">Sign Up</a></p>
+                <p className="text-center">Do not have an account yet? <a href="/signup" className="underline hover:cursor-pointer">Sign Up</a></p>
                 <button type="submit" className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
             </form>
             </div>
