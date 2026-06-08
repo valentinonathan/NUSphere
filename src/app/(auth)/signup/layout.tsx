@@ -32,11 +32,11 @@ export default function SignUpLayout({
 }>) {
     const [data, setData] = useState()
   return (
-    <SignUpContext.Provider value={{data, setData}}>
+    <>
         <div className="fixed z-0 top-0 h-screen w-screen bg-center bg-cover" style={{ backgroundImage: `url(${background.src})` }}></div>
         <div className="text-white z-1 flex justify-center items-center min-w-screen min-h-screen max-w-screen max-h-screen w-screen h-screen">
             {children}
         </div>
-    </SignUpContext.Provider>
+    </>
   );
 }
