@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-export default function DropdownComponent({name, placeholder, options, size}: {name: string; placeholder: string; options: string[]; size: string;}) {
+export default function DropdownComponent({name, placeholder, options}: {name: string; placeholder: string; options: string[];}) {
   return (
     <Select>
       <SelectTrigger className="w-full bg-white/35 rounded-sm">
