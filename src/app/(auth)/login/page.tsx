@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   Field,
   FieldDescription,
@@ -10,13 +11,13 @@ import background from "../../../../public/login-background.png"
 import { useRef } from "react";
 
 export default function Login() {
-    const usernameRef = useRef(null);
-    const passwordRef = useRef(null);
+    const usernameRef = useRef<HTMLInputElement | null>(null);
+    const passwordRef = useRef<HTMLInputElement | null>(null);
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.MouseEvent) {
         e.preventDefault();
-        const username = usernameRef.current.value;
-        const password = passwordRef.current.value;
+        const username = usernameRef?.current?.value;
+        const password = passwordRef?.current?.value;
         const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/auth/login", {
             method: "POST",
             credentials: "include",
@@ -46,7 +47,7 @@ export default function Login() {
                 <label>Password</label>
                 <input type="password" ref={passwordRef} name="password" className="bg-white/20 p-1.5 w-80 rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your password..."></input>
             </div>
-            <p className="text-center">Do not have an account yet? <a href="/signup" className="underline hover:cursor-pointer">Sign Up</a></p>
+            <p className="text-center">Do not have an account yet? <Link href="/signup" className="underline hover:cursor-pointer">Sign Up</Link></p>
             <button type="submit" onClick={e => handleSubmit(e)} className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
         </form>
         </div>
