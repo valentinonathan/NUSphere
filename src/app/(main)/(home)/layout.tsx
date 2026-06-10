@@ -6,7 +6,7 @@ export default async function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const response = await fetch(process.env.BACKEND_URL!);
+  const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL!);
   const data = await response.json();
 
   return (
