@@ -23,13 +23,13 @@ export default function Login() {
         e.preventDefault();
         const username = usernameRef?.current?.value;
         const password = passwordRef?.current?.value;
-        if (username?.length == 0) {
+        if (username != undefined && username?.length == 0) {
             return setUsernameWarning("Username field should not be empty!");
         }
-        if (username?.length > 30) {
+        if (username != undefined && username?.length > 30) {
             return setUsernameWarning("Username must be lest than 30 words!");
         }
-        if (password?.length == 0) {
+        if (password != undefined && password?.length == 0) {
             return setPasswordWarning("Password field should not be empty!")
         }
 
