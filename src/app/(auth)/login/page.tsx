@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import background from "../../../../public/login-background.png"
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { fetchBackendClient } from "@/utils/fetch-backend-client";
 
 export default function Login() {
     const usernameRef = useRef<HTMLInputElement | null>(null);
@@ -32,24 +33,16 @@ export default function Login() {
         if (password != undefined && password?.length == 0) {
             return setPasswordWarning("Password field should not be empty!")
         }
+        type response = {
+            message: string
+        }
 
-        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/auth/login", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            })
-        });
-        
-        const data = await response.json();
-        if (response.ok) {
+        const response = await fetchBackendClient<response>("/auth/login", "POST", {username: username, password: password});
+
+        if (response.message == "You are authorized") {
             router.push("/");
         } else {
-            setErrorMessage(data?.message);
+            setErrorMessage(response?.message);
         }
     }
 

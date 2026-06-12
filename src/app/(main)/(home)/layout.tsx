@@ -1,4 +1,4 @@
-import { fetchBackendServer } from "@/utils/fetch-backend";
+import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import "../../globals.css";
 
 
