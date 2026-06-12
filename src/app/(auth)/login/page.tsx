@@ -44,6 +44,7 @@ export default function Login() {
                 password: password
             })
         });
+        
         const data = await response.json();
         if (response.ok) {
             router.push("/");
