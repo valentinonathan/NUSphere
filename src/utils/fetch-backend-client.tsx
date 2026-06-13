@@ -1,36 +1,24 @@
 export async function fetchBackendClient<T>(endpoint: string, method: string, body?: object): Promise<T>{ // Fetch backend for client component
-    try {
-        if (method == "GET" || method == "DELETE") {
-            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint, {
-                method: method,
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-        } else {
-            const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint, {
-                method: method,
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body)
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-        }
-    } catch (error: unknown) {
-        const err = error as Error;
-        console.log(err.message);
-        return null as T;
+    if (method == "GET" || method == "DELETE") {
+        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint, {
+            method: method,
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await response.json();
+        return data;
+    } else {
+        const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint, {
+            method: method,
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        return data;
     }
 }
