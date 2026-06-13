@@ -63,7 +63,7 @@ export default function Login() {
                 {passwordWarning}
             </div>
             <p className="text-center">Do not have an account yet? <Link href="/signup" className="underline hover:cursor-pointer">Sign Up</Link></p>
-            <button type="submit" onClick={e => handleSubmit(e)} className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
+            <button type="button" onClick={e => handleSubmit(e)} className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign In</button>
             {errorMessage}
         </form>
         </div>

@@ -54,7 +54,7 @@ export default function AccountForm() {
                 <label>Residence</label>
                 <DropdownComponent setState={setResidence} name="Residence" placeholder="Select residence" options={["Acacia College", "Cendana College", "College of Alice & Peter Tan", "Eusoff Hall", "Elm College", "Helix House", "Kent Ridge Hall", "King Edward VII Hall", "LightHouse", "Pioneer House", "Prince George's Park Residence", "Raffles Hall", "Ridge View Residential College", "Saga College", "Sheares Hall", "Tembusu College", "Temasek Hall", "UTown Residence"]}/>
             </div>
-            <button type="submit" onClick={e => handleSubmit(e)} className="mt-4 min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Submit</button>
+            <button type="button" onClick={e => handleSubmit(e)} className="mt-4 min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Submit</button>
             {errorMessage}
             </form>
         </div>

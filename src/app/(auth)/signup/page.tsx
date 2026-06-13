@@ -110,7 +110,7 @@ export default function SignUp() {
                 <input ref={passwordRef} type="password" name="password" className="bg-white/20 p-1.5 w-full rounded-sm border-1 border-white/20 shadow-md shadow-black/5" placeholder="Type your password..."></input>
                 {passwordError}
             </div>
-            <button type="submit" onClick={e => handleSubmit(e)} className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign Up</button>
+            <button type="button" onClick={e => handleSubmit(e)} className="min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Sign Up</button>
             {errorMessage}
             </form>
         </div>
