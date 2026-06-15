@@ -23,6 +23,7 @@ export default async function HomeLayout({
           Cookie: cookieStore.toString()
       },
   });
+  console.log(cookieStore.getAll());
   const data = await response.json();
   return (
     <div className="flex min-h-full min-w-full w-full">
