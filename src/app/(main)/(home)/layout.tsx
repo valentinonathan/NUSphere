@@ -1,4 +1,5 @@
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
+import { cookies } from "next/headers";
 import "../../globals.css";
 
 
@@ -7,14 +8,22 @@ export default async function HomeLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  type data = {
-    message: inner[]
-  }
-  type inner = {
-    name: string
-  }
-  const data: data = await fetchBackendServer<data>("", "GET");
-
+  // type data = {
+  //   message: inner[]
+  // }
+  // type inner = {
+  //   name: string
+  // }
+  // const data: data = await fetchBackendServer<data>("", "GET");
+  const cookieStore = await cookies();
+  const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL! + "", {
+      method: "GET",
+      headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString()
+      },
+  });
+  const data = await response.json();
   return (
     <div className="flex min-h-full min-w-full w-full">
       {children}
