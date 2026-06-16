@@ -37,7 +37,17 @@ export default function Login() {
             message: string
         }
 
-        const response = await fetchBackendClient<response>("/auth/login", "POST", {username: username, password: password});
+        // const response = await fetchBackendClient<response>("/auth/login", "POST", {username: username, password: password});
+
+        const res = await fetch("/api/login", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({username: username, password: password})
+        });
+        const response = await res.json();
 
         if (response.message == "You are authorized") {
             router.push("/");
