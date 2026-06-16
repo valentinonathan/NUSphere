@@ -71,17 +71,17 @@ export default function SignUp() {
             type response = {
                 message: string
             }
-            // const response = await fetchBackendClient<response>("/auth/signup/create-account", "POST", account);
+            const response = await fetchBackendClient<response>("/auth/signup/create-account", "POST", account);
 
-            const res = await fetch("/api/signup/create-account", {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(account)
-            });
-            const response = await res.json();
+            // const res = await fetch("/api/signup/create-account", {
+            //     method: "POST",
+            //     credentials: "include",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //     },
+            //     body: JSON.stringify(account)
+            // });
+            // const response = await res.json();
 
             if (response?.message == "You are authorized") {
                 setErrorMessage(response.message);
