@@ -3,6 +3,7 @@ import { MdOutlineHomeWork } from "react-icons/md";
 import { IoGlobeOutline } from "react-icons/io5";
 import { TabGroup } from "@/components/tabgroup";
 import post from "../../../../public/post-dummy.png";
+import { fetchBackendServer } from "@/utils/fetch-backend-server";
 
 export default async function ProfileLayout({
   children, 
@@ -13,6 +14,27 @@ export default async function ProfileLayout({
 }>) {
 
     const { username } = await params;
+
+    type userDetails = {
+      id: number,
+      username: string,
+      firstName: string,
+      lastName: string,
+      nationality: string,
+      year: string,
+      faculty: string,
+      major: string,
+      residence: string,
+      bio: string
+      message: string
+    }
+    const userDetails = await fetchBackendServer<userDetails>(`/users/username/${username}`, "GET");
+
+    console.log(userDetails);
+    
+    if (userDetails?.message != undefined && userDetails.message == "Username not found") {
+      return (<h1>Username {username} not found </h1>);
+    }
 
     return (
         <div className="flex justify-center min-w-full pt-10">
@@ -28,23 +50,23 @@ export default async function ProfileLayout({
             </div>
 
             <div className="flex flex-col gap-2">
-              <h1 className="text-3xl font-semibold">Valentino Nathan <span className="text-sm">@{username}</span></h1>
-              <h2>Year 1 Computer Science Undergraduate</h2>
+              <h1 className="text-3xl font-semibold">{userDetails.firstName} {userDetails.lastName} <span className="text-sm">@{username}</span></h1>
+              <h2>{userDetails.major} {userDetails.year}</h2>
               <div className="flex gap-8">
                 <div className="flex gap-2 text-sm">
                   <div className="min-h-4 min-w-4 flex justify-center items-center">
                     <MdOutlineHomeWork className="text-lg" />
                   </div>
-                  PGPR Residences
+                  {userDetails.residence}
                 </div>
                 <div className="flex gap-2 text-sm">
                   <div className="min-h-4 min-w-4 flex justify-center items-center">
                     <IoGlobeOutline className="text-lg" />
                   </div>
-                  International, Indonesia
+                  {userDetails.nationality == "Singapore Citizen" || userDetails.nationality == "Singapore PR" ? userDetails.nationality : "International, " + userDetails.nationality}
                 </div>
               </div>
-              <p className="break-words">"I have been crucified with Christ, and it is no longer I who live, but Christ lives in me." ~Galatians 2:20</p>
+              <p className="break-words">{userDetails.bio}</p>
               <TabGroup options={["Posts", "Events", "Market"]}/>
             </div>
           </div>
