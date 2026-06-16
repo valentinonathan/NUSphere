@@ -3,62 +3,86 @@
 import EventPost from "./EventPost"
 import Link from "next/link"
 import { useEffect, useState } from "react"
+import { fetchBackendClient } from "@/utils/fetch-backend-client"
+import { Timestamp } from "next/dist/server/lib/cache-handlers/types"
 
-export type PostProps = {
+export type Event = {
   id: number
+  username: string
   title: string
-  user: string
-  imageURL: string
-  date: string
   description: string
+  location: string
+  start_time: Timestamp
 }
 
 const STORAGE_KEY = "nusphere-events"
 
-const defaultEvents: PostProps[] = [
-  {
-    id: 1,
-    title: "Tech Workshop 2026",
-    user: "Calvin",
-    imageURL: "/post-dummy.png",
-    date: "May 30, 2026",
-    description: "Learn modern web development with Next.js and Prisma.",
-  },
-  {
-    id: 2,
-    title: "Gaming Tournament",
-    user: "Alex",
-    imageURL: "/post-dummy.png",
-    date: "June 5, 2026",
-    description: "Join our weekend Valorant tournament with prizes.",
-  },
-  {
-    id: 3,
-    title: "Music Festival",
-    user: "Sarah",
-    imageURL: "/post-dummy.png",
-    date: "July 12, 2026",
-    description: "Outdoor live music festival featuring local artists.",
-  },
-]
+type ApiResponse<T> = {
+  data: T
+}
+
+// const defaultEvents: PostProps[] = [
+//   {
+//     id: 1,
+//     title: "Tech Workshop 2026",
+//     user: "Calvin",
+//     imageURL: "/post-dummy.png",
+//     date: "May 30, 2026",
+//     description: "Learn modern web development with Next.js and Prisma.",
+//   },
+//   {
+//     id: 2,
+//     title: "Gaming Tournament",
+//     user: "Alex",
+//     imageURL: "/post-dummy.png",
+//     date: "June 5, 2026",
+//     description: "Join our weekend Valorant tournament with prizes.",
+//   },
+//   {
+//     id: 3,
+//     title: "Music Festival",
+//     user: "Sarah",
+//     imageURL: "/post-dummy.png",
+//     date: "July 12, 2026",
+//     description: "Outdoor live music festival featuring local artists.",
+//   },
+// ]
+
+
+
 
 const page = () => {
   const [search, setSearch] = useState("")
-  const [events, setEvents] = useState<PostProps[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (stored) {
+    // const stored = localStorage.getItem(STORAGE_KEY)
+    // if (stored) {
+    //   try {
+    //     setEvents(JSON.parse(stored))
+    //     return
+    //   } catch {
+    //     // ignore parse errors and reinitialize
+    //   }
+    // }
+
+    // localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultEvents))
+    // setEvents(defaultEvents)
+    async function loadEvents() {
       try {
-        setEvents(JSON.parse(stored))
-        return
-      } catch {
-        // ignore parse errors and reinitialize
+        setLoading(true)
+        const response = await fetchBackendClient<ApiResponse<Event[]>>("/events/get", "GET");
+        setEvents(response.data)
+      } catch (error) {
+        console.log(error)
+      } finally {
+        setLoading(false)
       }
     }
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultEvents))
-    setEvents(defaultEvents)
+    loadEvents();
+
   }, [])
 
   const filteredEvents = events.filter((post) =>

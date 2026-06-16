@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { fetchBackendClient } from "@/utils/fetch-backend-client"
 
 const STORAGE_KEY = "nusphere-events"
 
@@ -18,31 +19,32 @@ const formatDate = (value: string) => {
 const page = () => {
   const router = useRouter()
   const [title, setTitle] = useState("")
-  const [user, setUser] = useState("")
-  const [date, setDate] = useState("")
   const [description, setDescription] = useState("")
+  const [location, setLocation] = useState("")
+  const [startTime, setStartTime] = useState("")
   const [error, setError] = useState("")
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    if (!title || !user || !date || !description) {
-      setError("Please fill in every field before creating the event.")
-      return
-    }
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    try {
+      event.preventDefault()
+      if (!title || !description || !location || !startTime) {
+        setError("Please fill in every field before creating the event.")
+        return
+      }
 
-    const stored = localStorage.getItem(STORAGE_KEY)
-    const existingEvents = stored ? JSON.parse(stored) : []
-    const newEvent = {
-      id: Date.now(),
-      title,
-      user,
-      imageURL: "/post-dummy.png",
-      date: formatDate(date),
-      description,
-    }
+      const newEvent = {
+        "title": title,
+        "description": description,
+        "location": location,
+        "start_time":  new Date(startTime).toISOString()
+      }
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([newEvent, ...existingEvents]))
-    router.push("/events")
+      const query = await fetchBackendClient<{ message: string }>("/events/create", "POST", newEvent);
+
+      router.push("/events")
+    } catch (error) {
+      console.log(error)
+    } 
   }
 
   return (
@@ -56,39 +58,40 @@ const page = () => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2"
-            placeholder="Enter event title"
-          />
-        </label>
-
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">Hosted by</span>
-          <input
-            type="text"
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2"
-            placeholder="Event organizer name"
-          />
-        </label>
-
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700">Date</span>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2"
+            placeholder="Enter title"
           />
         </label>
 
         <label className="block">
           <span className="text-sm font-medium text-slate-700">Description</span>
-          <textarea
+          <input
+            type="text"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2"
-            rows={5}
-            placeholder="Write a brief description of the event"
+            placeholder="Enter description"
+          />
+        </label>
+
+        <label className="block">
+          <span className="text-sm font-medium text-slate-700">Venue</span>
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="mt-1 block w-full rounded-md border border-slate-300 px-3 py-2"
+            placeholder="Enter location"
+          />
+        </label>
+
+        <label className="block">
+          <span className="block text-sm font-medium text-slate-700">Start Time</span>
+          <input
+            id="start_time"
+            type="datetime-local"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            className="border rounded px-3 py-2"
           />
         </label>
 
