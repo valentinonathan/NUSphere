@@ -17,9 +17,7 @@ export async function POST(req: Request) {
             method,
             headers: {
                 "Content-Type": "application/json",
-                Authorization: token
-                    ? `Bearer ${token}`
-                    : "",
+                Cookie: `token=${token}`
             },
             ...(method !== "GET" &&
                 method !== "DELETE" && {
