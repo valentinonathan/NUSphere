@@ -1,23 +1,26 @@
 "use client";
 import DropdownComponent from "@/app/(auth)/signup/account-form/dropdownComponent";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
 import { useRouter } from "next/navigation";
 
 export default function AccountForm() {
     const router = useRouter();
-    type accountForm = {Nationality: string, Year: string, Faculty: string, Major: string, Residence: string};
+    type accountForm = {Nationality: string, Year: string, Faculty: string, Major: string, Residence: string, Bio: string};
 
     const [nationality, setNationality] = useState<string>("");
     const [year, setYear] = useState<string>("");
     const [faculty, setFaculty] = useState<string>("");
     const [major, setMajor] = useState<string>("");
     const [residence, setResidence] = useState<string>("");
+    const bioRef = useRef<HTMLInputElement>(null);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
     async function handleSubmit(e: React.MouseEvent) {
         e.preventDefault();
-        const accountForm: accountForm = {Nationality: nationality, Year: year, Faculty: faculty, Major: major, Residence: residence};
+        let bio = bioRef.current?.value;
+        bio = bio == undefined ? "" : bio;
+        const accountForm: accountForm = {Nationality: nationality, Year: year, Faculty: faculty, Major: major, Residence: residence, Bio: bio};
 
         type response = {message: string};
         const response = await fetchBackendClient<response>("/auth/signup/edit-account-details", "POST", accountForm);
@@ -53,6 +56,10 @@ export default function AccountForm() {
             <div className="min-w-full flex flex-col">
                 <label>Residence</label>
                 <DropdownComponent setState={setResidence} name="Residence" placeholder="Select residence" options={["Acacia College", "Cendana College", "College of Alice & Peter Tan", "Eusoff Hall", "Elm College", "Helix House", "Kent Ridge Hall", "King Edward VII Hall", "LightHouse", "Pioneer House", "Prince George's Park Residence", "Raffles Hall", "Ridge View Residential College", "Saga College", "Sheares Hall", "Tembusu College", "Temasek Hall", "UTown Residence"]}/>
+            </div>
+            <div className="min-w-full flex flex-col">
+                <label>Bio</label>
+                <input ref={bioRef} type="text" className="bg-white/35 rounded-sm p-2"/>
             </div>
             <button type="button" onClick={e => handleSubmit(e)} className="mt-4 min-w-full bg-secondary/70 p-2 rounded-sm border-1 border-white/20 shadow-md shadow-black/5 hover:cursor-pointer hover:bg-secondary/80 transition duration-100 hover:shadow-lg">Submit</button>
             {errorMessage}

@@ -1,4 +1,4 @@
-import post from "../../../../public/post-dummy.png";
+import post from "../../../../../public/post-dummy.png";
 import { IoChatbubble } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
@@ -8,9 +8,10 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 import GroupAvatar from "@/components/groupAvatar";
-import profile from "../../../../public/Profile.png";
+import profile from "../../../../../public/Profile.png";
 
 export default function Post() {
+    
     return (
         <div className="flex flex-col gap-2 min-w-110 w-110 max-w-110 max-h-500 px-3 pt-3 pb-5 shadow-black/10 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
             <div className="flex gap-2 items-center">
