@@ -4,6 +4,7 @@ import { IoGlobeOutline } from "react-icons/io5";
 import { TabGroup } from "@/components/tabgroup";
 import post from "../../../../public/post-dummy.png";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
+import Link from "next/link";
 
 export default async function ProfileLayout({
   children, 
@@ -28,9 +29,22 @@ export default async function ProfileLayout({
       bio: string
       message: string
     }
+    type posts = {
+      id: number,
+      user_id: number,
+      url: string,
+      caption: string,
+      likes: string,
+      comments: string,
+      username: string
+    }
+    type postData = {
+      posts: posts[],
+      count: number
+    }
     const userDetails = await fetchBackendServer<userDetails>(`/users/username/${username}`, "GET");
 
-    console.log(userDetails);
+    const postData = await fetchBackendServer<postData>(`/posts/username/${username}`, "GET");
     
     if (userDetails?.message != undefined && userDetails.message == "Username not found") {
       return (<h1>Username {username} not found </h1>);
@@ -45,7 +59,7 @@ export default async function ProfileLayout({
               <AvatarWithOnline size="8"/>
               <p>
                 <span className="font-semibold">1k</span> friends <br />
-                <span className="font-semibold">53</span> posts
+                <span className="font-semibold">{postData.count}</span> posts
               </p>
             </div>
 
@@ -72,24 +86,7 @@ export default async function ProfileLayout({
           </div>
 
           <div className="grid grid-cols-3 max-w-200 gap-1">
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
-            <a href="/post">
-            <img src={post.src} className="aspect-[4/5] w-full object-cover" />
-            </a>
+            {postData?.posts?.map(p => <Link key={p.id} href={`/post/${p.id}`}><img src={post.src} className="aspect-[4/5] w-full object-cover" /></Link>)}
           </div>
 
         </div>

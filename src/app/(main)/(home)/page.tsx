@@ -1,4 +1,4 @@
-import Post from "../post/Post";
+import Post from "../post/[postId]/Post";
 
 
 export default function Home() {
