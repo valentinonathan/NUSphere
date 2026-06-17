@@ -12,7 +12,7 @@ export type Event = {
   title: string
   description: string
   location: string
-  start_time: Timestamp
+  start_time: string
 }
 
 const STORAGE_KEY = "nusphere-events"
