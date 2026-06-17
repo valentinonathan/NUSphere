@@ -21,11 +21,30 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
         comments: number,
         username: string,
         first_name: string,
-        last_name: string
+        last_name: string,
+        message: string
     }
     const post = await fetchBackendServer<post>(`/posts/${postId}`, "GET");
-    const likes = formatNumber(post.likes == null ? 0 : post.likes);
-    const comments = formatNumber(post.comments == null ? 0 : post.comments);
+
+    if (post?.message != undefined && post.message == "Post not found") {
+        return (<p>Post not found</p>);
+    }
+
+    type comment = {
+        id: number,
+        post_id: number,
+        user_id: number,
+        content: string,
+        first_name: string,
+        last_name: string
+    }
+    type commentData = {
+        comments: comment[],
+        count: number
+    }
+    const commentData = await fetchBackendServer<commentData>(`/comments/${postId}`, "GET");
+    const likesCount = formatNumber(post?.likes == null ? 0 : post?.likes);
+    const commentsCount = formatNumber(post?.comments == null ? 0 : post?.comments);
 
     return (
         <div className="min-w-full flex justify-center items-center" style={{minHeight:"calc(100vh - 6.25rem)", maxHeight:"calc(100vh - 6.25rem)", height: "calc(100vh - 6.25rem)"}}>
@@ -35,25 +54,25 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
                 </div>
                 <div className="flex-1 min-h-full flex flex-col justify-between">
                     <div className="flex gap-2 items-center px-2 min-h-15 max-h-15 min-w-full rounded-tr-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
-                        <Link href={`/${post.username}`}>
+                        <Link href={`/${post?.username}`}>
                         <AvatarWithOnline size="2.5"/>
                         </Link>
-                        <Link href={`/${post.username}`}>
-                        <h1>{post.first_name} {post.last_name}</h1>
+                        <Link href={`/${post?.username}`}>
+                        <h1>{post?.first_name} {post?.last_name}</h1>
                         </Link>
                     </div>
-                    <div className="flex-1 max-h-107 overflow-y-auto p-2 bg-black/10 no-scrollbar">
-                        <Comment firstName={post.first_name} lastName={post.last_name} caption={post.caption}/>
+                    <div className="flex-1 flex flex-col gap-2 max-h-107 overflow-y-auto p-2 bg-black/10 no-scrollbar">
+                        <Comment firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} comments={commentData?.comments}/>
                     </div>
                     <div className="min-h-28 max-h-28 rounded-br-md p-2 pr-6 gap-2 flex flex-col bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
                         <div className="px-2 min-w-full max-h-max flex">
                             <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
                                 <FaHeart className="text-[165%]"/>
-                                {likes}
+                                {likesCount}
                             </div>
                             <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
                                 <IoChatbubble className="text-[165%]"/>
-                                {comments}
+                                {commentsCount}
                             </div>
                             <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
                                 <IoSend className="text-[165%]"/>
