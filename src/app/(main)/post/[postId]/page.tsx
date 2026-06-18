@@ -74,7 +74,7 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
                         <h1>{post?.first_name} {post?.last_name}</h1>
                         </Link>
                     </div>
-                    <Interactive likesCount={likesCount} commentsCount={commentsCount} postId={Number(postId)} hasLiked={hasLiked} firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} commentsData={commentData?.comments}/>
+                    {/* <Interactive likesCount={likesCount} commentsCount={commentsCount} postId={Number(postId)} hasLiked={hasLiked} firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} commentsData={commentData?.comments}/> */}
                 </div>
             </div>
         </div>
