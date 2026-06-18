@@ -9,6 +9,8 @@ import Comment from "./Comment";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
 import { formatNumber } from "@/utils/valueConverter";
+import Interactive from "./Interactive";
+import { fetchBackendClient } from "@/utils/fetch-backend-client";
 
 export default async function PostPage({params}: {params: Promise<{ postId: string }>}) {
     const { postId } = await params;
@@ -43,8 +45,19 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
         count: number
     }
     const commentData = await fetchBackendServer<commentData>(`/comments/${postId}`, "GET");
-    const likesCount = formatNumber(post?.likes == null ? 0 : post?.likes);
-    const commentsCount = formatNumber(post?.comments == null ? 0 : post?.comments);
+    const likesCount = post?.likes;
+    const commentsCount = post?.comments;
+    
+    type hasLiked = {
+        hasLiked: boolean
+    }
+    const hasLikedData = await fetchBackendServer<hasLiked>(`/posts/${postId}/likes`, "GET");
+    let hasLiked: boolean;
+    if (hasLikedData?.hasLiked == undefined) {
+        hasLiked = false;
+    } else {
+        hasLiked = hasLikedData.hasLiked;
+    }
 
     return (
         <div className="min-w-full flex justify-center items-center" style={{minHeight:"calc(100vh - 6.25rem)", maxHeight:"calc(100vh - 6.25rem)", height: "calc(100vh - 6.25rem)"}}>
@@ -61,30 +74,7 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
                         <h1>{post?.first_name} {post?.last_name}</h1>
                         </Link>
                     </div>
-                    <div className="flex-1 flex flex-col gap-2 max-h-107 overflow-y-auto p-2 bg-black/10 no-scrollbar">
-                        <Comment firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} comments={commentData?.comments}/>
-                    </div>
-                    <div className="min-h-28 max-h-28 rounded-br-md p-2 pr-6 gap-2 flex flex-col bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
-                        <div className="px-2 min-w-full max-h-max flex">
-                            <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
-                                <FaHeart className="text-[165%]"/>
-                                {likesCount}
-                            </div>
-                            <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
-                                <IoChatbubble className="text-[165%]"/>
-                                {commentsCount}
-                            </div>
-                            <div className="flex gap-2 justify-start items-center min-w-18 max-w-18">
-                                <IoSend className="text-[165%]"/>
-                            </div>
-                        </div>
-                        <div className="ml-2 flex gap-2">
-                            <GroupAvatar />
-                            <p className="text-sm">Liked by Calvin Yoel and 100k others</p>
-                        </div>
-                        <textarea placeholder="Add a comment..." className="min-w-full flex-1 ml-2 focus:outline-0 resize-none" />
-                    </div>
-
+                    <Interactive likesCount={likesCount} commentsCount={commentsCount} postId={Number(postId)} hasLiked={hasLiked} firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} commentsData={commentData?.comments}/>
                 </div>
             </div>
         </div>
