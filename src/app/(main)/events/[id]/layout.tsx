@@ -1,4 +1,4 @@
-export default function CreateEventLayout({
+export default function EventIdLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

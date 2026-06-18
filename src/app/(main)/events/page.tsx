@@ -72,7 +72,7 @@ const page = () => {
     async function loadEvents() {
       try {
         setLoading(true)
-        const response = await fetchBackendClient<ApiResponse<Event[]>>("/events/get", "GET");
+        const response = await fetchBackendClient<ApiResponse<Event[]>>("/events/", "GET");
         setEvents(response.data)
       } catch (error) {
         console.log(error)

@@ -39,7 +39,7 @@ const page = () => {
         "start_time":  new Date(startTime).toISOString()
       }
 
-      const query = await fetchBackendClient<{ message: string }>("/events/create", "POST", newEvent);
+      const query = await fetchBackendClient<{ message: string }>("/events", "POST", newEvent);
 
       router.push("/events")
     } catch (error) {

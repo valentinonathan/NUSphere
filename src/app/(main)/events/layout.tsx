@@ -1,4 +1,4 @@
-export default function ChatLayout({
+export default function EventLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
