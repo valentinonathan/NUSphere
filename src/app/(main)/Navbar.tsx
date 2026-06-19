@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import AvatarWithOnline from "@/components/avatarWithOnline";
 import Search from "@/components/search";
+import NotificationTab from "./NotificationTab";
 import logo from "../../../public/NUSPHERE Logo.png";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
@@ -37,6 +38,7 @@ export default async function Navbar() {
                             </>
                         )
                 }
+                <NotificationTab userId={data?.userId || 0} loggedIn={data?.loggedIn || false} />
                 <Link href={`/${data.username}`}>
                     <AvatarWithOnline size="2.5"/>
                 </Link>
