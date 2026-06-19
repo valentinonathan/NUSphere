@@ -38,7 +38,7 @@ export default function EventDetailPage() {
     const rawId = params?.id
     const eventId = Array.isArray(rawId) ? rawId[0] : rawId
 
-    
+
     const [event, setEvent] = useState<Event | null>(null)
     const [attendees, setAttendees] = useState<Attendee[]>([])
     const [attendanceCount, setAttendanceCount] = useState(0)
@@ -50,11 +50,23 @@ export default function EventDetailPage() {
         try {
             setLoading(true)
             setError("")
-            const attendanceResponse = await fetchBackendClient<ApiResponse<Event>>(
+            await fetchBackendClient<ApiResponse<Event>>(
                 `/events/${eventId}/attendance`,
                 "POST"
             )
             setMyAttendance(true)
+
+            try {
+                const attendanceResponse = await fetchBackendClient<ApiResponse<AttendanceResponse>>(
+                    `/events/${eventId}/attendance`,
+                    "GET"
+                )
+                setAttendees(attendanceResponse.data.rows ?? [])
+                setAttendanceCount(attendanceResponse.data.count ?? 0)
+            } catch {
+                setAttendees([])
+                setAttendanceCount(0)
+            }
             // router.push("/events")
         } catch (err) {
             console.log(err)
@@ -68,12 +80,24 @@ export default function EventDetailPage() {
         try {
             setLoading(true)
             setError("")
-            const attendanceResponse = await fetchBackendClient<ApiResponse<Event>>(
+            await fetchBackendClient<ApiResponse<Event>>(
                 `/events/${eventId}/attendance`,
                 "DELETE"
             )
             setMyAttendance(false)
             // router.push("/events")
+
+            try {
+                const attendanceResponse = await fetchBackendClient<ApiResponse<AttendanceResponse>>(
+                    `/events/${eventId}/attendance`,
+                    "GET"
+                )
+                setAttendees(attendanceResponse.data.rows ?? [])
+                setAttendanceCount(attendanceResponse.data.count ?? 0)
+            } catch {
+                setAttendees([])
+                setAttendanceCount(0)
+            }
         } catch (err) {
             console.log(err)
             setError("Failed to unsubmit attendance.")
@@ -193,20 +217,20 @@ export default function EventDetailPage() {
                     {!myAttendance ? (
                         <form onSubmit={handleSubmit}>
                             <button type="submit">
-                            <div className="w-fit rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white">
-                                Submit
-                            </div>
+                                <div className="w-fit rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white">
+                                    Submit
+                                </div>
                             </button>
                         </form>)
                         :
                         (<form onSubmit={handleUnsubmit}>
                             <button type="submit">
-                            <div className="w-fit rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white">
-                                Unsubmit
-                            </div>
+                                <div className="w-fit rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white">
+                                    Unsubmit
+                                </div>
                             </button>
                         </form>
-                    )}
+                        )}
 
 
                 </div>
