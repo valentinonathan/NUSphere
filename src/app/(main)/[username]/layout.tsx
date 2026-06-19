@@ -1,10 +1,10 @@
 import AvatarWithOnline from "@/components/avatarWithOnline";
 import { MdOutlineHomeWork } from "react-icons/md";
 import { IoGlobeOutline } from "react-icons/io5";
-import { TabGroup } from "@/components/tabgroup";
 import post from "../../../../public/post-dummy.png";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
+import Interactive from "./Interactive";
 
 export default async function ProfileLayout({
   children, 
@@ -26,8 +26,9 @@ export default async function ProfileLayout({
       faculty: string,
       major: string,
       residence: string,
-      bio: string
-      message: string
+      bio: string,
+      message: string,
+      friends: number
     }
     type posts = {
       id: number,
@@ -50,6 +51,8 @@ export default async function ProfileLayout({
       return (<h1>Username {username} not found </h1>);
     }
 
+    const friendRequestData = await fetchBackendServer<{status: string}>(`/friend-requests/${userDetails?.id}`, "GET");
+
     return (
         <div className="flex justify-center min-w-full pt-10">
         <div className="flex flex-col gap-10 justify-center items-center">
@@ -58,7 +61,7 @@ export default async function ProfileLayout({
             <div className="min-h-full min-w-max flex flex-col justify-between">
               <AvatarWithOnline size="8"/>
               <p>
-                <span className="font-semibold">1k</span> friends <br />
+                <span className="font-semibold">{userDetails.friends}</span> friends <br />
                 <span className="font-semibold">{postData.count}</span> posts
               </p>
             </div>
@@ -81,7 +84,7 @@ export default async function ProfileLayout({
                 </div>
               </div>
               <p className="break-words">{userDetails.bio}</p>
-              <TabGroup options={["Posts", "Events", "Market"]}/>
+              <Interactive friendStatus={friendRequestData} friendId={userDetails?.id}/>
             </div>
           </div>
 
