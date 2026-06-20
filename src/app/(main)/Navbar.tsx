@@ -5,6 +5,7 @@ import NotificationTab from "./NotificationTab";
 import logo from "../../../public/NUSPHERE Logo.png";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
+import { IoAdd } from "react-icons/io5";
 
 export default async function Navbar() {
       type data = {
@@ -26,7 +27,17 @@ export default async function Navbar() {
             <div className="flex h-11 gap-4.5 items-center">
                 {
                     data?.loggedIn != undefined && data?.loggedIn
-                        ? null
+                        ? (
+                            <>
+                            <Link href="/create-post">
+                                <div className="bg-black/10 rounded-md flex text-white p-2 pr-3 gap-2 hover:cursor-pointer">
+                                    <IoAdd className="text-2xl bg-white/10 rounded-sm"/>
+                                    Create Post
+                                </div>
+                            </Link>
+                            <NotificationTab userId={data?.userId || 0} loggedIn={data?.loggedIn || false} />
+                            </>
+                        )
                         : (
                             <>
                             <Link href="/login">
@@ -38,7 +49,6 @@ export default async function Navbar() {
                             </>
                         )
                 }
-                <NotificationTab userId={data?.userId || 0} loggedIn={data?.loggedIn || false} />
                 <Link href={`/${data.username}`}>
                     <AvatarWithOnline size="2.5"/>
                 </Link>

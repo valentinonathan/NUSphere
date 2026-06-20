@@ -89,7 +89,7 @@ export default async function ProfileLayout({
           </div>
 
           <div className="grid grid-cols-3 max-w-200 gap-1">
-            {postData?.posts?.map(p => <Link key={p.id} href={`/post/${p.id}`}><img src={post.src} className="aspect-[4/5] w-full object-cover" /></Link>)}
+            {postData?.posts?.map(p => <Link key={p.id} href={`/post/${p.id}`}><img src={p.url} className="aspect-[4/5] w-full object-cover" /></Link>)}
           </div>
 
         </div>

@@ -63,7 +63,7 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
         <div className="min-w-full flex justify-center items-center" style={{minHeight:"calc(100vh - 6.25rem)", maxHeight:"calc(100vh - 6.25rem)", height: "calc(100vh - 6.25rem)"}}>
             <div className="flex justify-start items-center min-w-250 max-w-250 min-h-150 max-h-150 h-150 shadow-black/10 shadow-md rounded-md">
                 <div className="w-120 h-150">
-                    <img src={postDummy.src} className="object-cover rounded-l-md"></img>
+                    <img src={post?.url} className="object-cover rounded-l-md"></img>
                 </div>
                 <div className="flex-1 min-h-full flex flex-col justify-between">
                     <div className="flex gap-2 items-center px-2 min-h-15 max-h-15 min-w-full rounded-tr-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
