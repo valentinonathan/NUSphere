@@ -30,8 +30,8 @@ export default async function Navbar() {
                         ? (
                             <>
                             <Link href="/create-post">
-                                <div className="bg-black/10 rounded-md flex text-white p-2 pr-3 gap-2 hover:cursor-pointer">
-                                    <IoAdd className="text-2xl bg-white/10 rounded-sm"/>
+                                <div className="bg-pink-500 rounded-md flex justify-center text-white p-1.5 pr-2 gap-2 hover:cursor-pointer">
+                                    <IoAdd className="text-2xl bg-white/27 rounded-sm"/>
                                     Create Post
                                 </div>
                             </Link>
@@ -49,7 +49,7 @@ export default async function Navbar() {
                             </>
                         )
                 }
-                <Link href={`/${data.username}`}>
+                <Link href={`/${data?.username}`}>
                     <AvatarWithOnline size="2.5"/>
                 </Link>
             </div>

@@ -190,9 +190,9 @@ export default function CreatePostPage() {
 
   return (
     <div className="min-h-screen p-4 flex justify-center items-center" style={{ minHeight: "calc(100vh - 6.25rem)" }}>
-      <div className="w-full max-w-lg">
+      <div className="w-full max-w-lg shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% pt-6 p-8">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-2 mb-8">
           <button
             onClick={() => router.back()}
             className="p-2 text-white hover:text-white/60 hover:cursor-pointer transition"
@@ -279,7 +279,7 @@ export default function CreatePostPage() {
               <p className="text-white/60 text-sm text-center">Drag to pan • Use zoom slider to adjust</p>
 
               {/* Change Image Button */}
-              <label className="px-4 py-2 bg-secondary/70 hover:bg-secondary/80 text-white rounded-md text-center cursor-pointer transition font-medium hover:cursor-pointer">
+              <label className="px-4 py-2 bg-pink-500/80 hover:bg-pink-500/60 text-white rounded-md text-center cursor-pointer transition font-medium hover:cursor-pointer">
                 Change Image
                 <input
                   type="file"
@@ -310,7 +310,7 @@ export default function CreatePostPage() {
           <button
             type="submit"
             disabled={!selectedImage || loading}
-            className="px-6 py-3 bg-primary/70 hover:bg-primary/80 disabled:bg-primary/50 text-white rounded-md font-semibold transition hover:cursor-pointer disabled:cursor-not-allowed"
+            className="px-6 py-3 bg-pink-500 hover:bg-pink-500/80 disabled:bg-pink/50 text-white rounded-md font-semibold transition hover:cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? "Creating..." : "Create Post"}
           </button>
