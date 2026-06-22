@@ -1,29 +1,24 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Cropper from "react-easy-crop";
 import { IoChevronBack } from "react-icons/io5";
 
-interface Area {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
 export default function CreatePostPage() {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
   const [caption, setCaption] = useState("");
+  const [zoom, setZoom] = useState(1);
+  const [pan, setPan] = useState({ x: 0, y: 0 });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
-  // react-easy-crop states
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-
+  const imageRef = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,68 +37,109 @@ export default function CreatePostPage() {
       return;
     }
 
+    setSelectedImage(file);
     setError("");
 
+    // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
       setImagePreview(e.target?.result as string);
       setZoom(1);
-      setCrop({ x: 0, y: 0 });
+      setPan({ x: 0, y: 0 });
     };
     reader.readAsDataURL(file);
   };
 
-  const onCropComplete = useCallback((croppedArea: Area, croppedAreaPixels: Area) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
 
-  // Generates the final 512x640 JPEG Blob based on user position/zoom
-  const generateCroppedBlob = async (): Promise<Blob | null> => {
-    if (!imagePreview || !croppedAreaPixels) return null;
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging) return;
 
-    const image = new Image();
-    image.src = imagePreview;
-    
-    await new Promise((resolve) => {
-      image.onload = resolve;
-    });
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+
+    setPan((prev) => ({
+      x: Math.max(-100, Math.min(100, prev.x + deltaX * 0.3)),
+      y: Math.max(-100, Math.min(100, prev.y + deltaY * 0.3)),
+    }));
+
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const cropImage = async (): Promise<Blob | null> => {
+    if (!imageRef.current || !containerRef.current) return null;
 
     const canvas = canvasRef.current;
     if (!canvas) return null;
 
-    // Enforce minimal specified dimensions at a 4:5 aspect ratio
-    const exportWidth = 512;
-    const exportHeight = 640;
-    canvas.width = exportWidth;
-    canvas.height = exportHeight;
+    const containerWidth = containerRef.current.offsetWidth;
+    const containerHeight = containerWidth * (5 / 4); // 4:5 aspect ratio
+
+    canvas.width = containerWidth;
+    canvas.height = containerHeight;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return null;
 
-    ctx.clearRect(0, 0, exportWidth, exportHeight);
+    const img = imageRef.current;
 
-    // Draw the crop mapping coordinates onto our 512x640 canvas
+    const imageAspect = img.naturalWidth / img.naturalHeight;
+    const frameAspect = containerWidth / containerHeight;
+
+    let drawWidth: number;
+    let drawHeight: number;
+
+    // Replicate object-fit: cover
+    if (imageAspect > frameAspect) {
+        drawHeight = containerHeight;
+        drawWidth = drawHeight * imageAspect;
+    } else {
+        drawWidth = containerWidth;
+        drawHeight = drawWidth / imageAspect;
+    }
+
+    ctx.clearRect(0, 0, containerWidth, containerHeight);
+
+    ctx.save();
+
+    // Move origin to center of crop frame
+    ctx.translate(containerWidth / 2, containerHeight / 2);
+
+    // Apply pan first, then zoom (matches visual expectation)
+    ctx.translate(pan.x, pan.y);
+    ctx.scale(zoom, zoom);
+
+    // Draw image centered
     ctx.drawImage(
-      image,
-      croppedAreaPixels.x,
-      croppedAreaPixels.y,
-      croppedAreaPixels.width,
-      croppedAreaPixels.height,
-      0,
-      0,
-      exportWidth,
-      exportHeight
+        img,
+        -drawWidth / 2,
+        -drawHeight / 2,
+        drawWidth,
+        drawHeight
     );
 
+    ctx.restore();
+
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => resolve(blob), "image/jpeg", 0.95);
+        canvas.toBlob(
+        (blob) => resolve(blob),
+        "image/jpeg",
+        0.95
+        );
     });
-  };
+    };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!imagePreview) {
+    if (!selectedImage) {
       setError("Please select an image");
       return;
     }
@@ -117,7 +153,8 @@ export default function CreatePostPage() {
     setError("");
 
     try {
-      const croppedBlob = await generateCroppedBlob();
+      // Crop the image
+      const croppedBlob = await cropImage();
       if (!croppedBlob) {
         throw new Error("Failed to crop image");
       }
@@ -133,6 +170,7 @@ export default function CreatePostPage() {
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -141,7 +179,7 @@ export default function CreatePostPage() {
         throw new Error(data.message || "Failed to create post");
       }
 
-      // Success - redirect home
+      // Success - redirect to home
       router.push("/");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create post");
@@ -153,11 +191,9 @@ export default function CreatePostPage() {
   return (
     <div className="min-h-screen p-4 flex justify-center items-center" style={{ minHeight: "calc(100vh - 6.25rem)" }}>
       <div className="w-full max-w-lg shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% pt-6 p-8">
-        
         {/* Header */}
         <div className="flex items-center gap-2 mb-8">
           <button
-            type="button"
             onClick={() => router.back()}
             className="p-2 text-white hover:text-white/60 hover:cursor-pointer transition"
             title="Go back"
@@ -175,7 +211,7 @@ export default function CreatePostPage() {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {!imagePreview ? (
+          {!selectedImage ? (
             /* File Upload Area */
             <label className="flex flex-col items-center justify-center w-full px-6 py-16 bg-gradient-to-r from-primary/20 via-secondary/20 to-secondary/20 border-2 border-dashed border-white/30 rounded-md cursor-pointer hover:border-white/50 transition shadow-black/10 shadow-md">
               <div className="text-center">
@@ -184,6 +220,7 @@ export default function CreatePostPage() {
                 <p className="text-white/60 text-sm">Max 5MB</p>
               </div>
               <input
+                ref={fileInputRef}
                 type="file"
                 accept="image/*"
                 onChange={handleImageSelect}
@@ -193,27 +230,35 @@ export default function CreatePostPage() {
           ) : (
             /* Image Crop Interface */
             <div className="flex flex-col gap-4">
-              
-              {/* Cropper Frame Container */}
-              <div className="relative w-full aspect-[4/5] bg-black/40 overflow-hidden border border-white/20 rounded-md">
-                <Cropper
-                  image={imagePreview}
-                  crop={crop}
-                  zoom={zoom}
-                  aspect={4 / 5}
-                  onCropChange={setCrop}
-                  onCropComplete={onCropComplete}
-                  onZoomChange={setZoom}
-                  minZoom={1}
-                  maxZoom={3}
-                  zoomWithScroll={true}
-                  showGrid={true}
-                  objectFit="contain"
+              {/* Crop Container */}
+              <div
+                ref={containerRef}
+                className="relative w-full bg-black/40 rounded-md overflow-hidden border border-white/20 shadow-black/10 shadow-md"
+                style={{
+                  aspectRatio: "4 / 5",
+                  cursor: isDragging ? "grabbing" : "grab",
+                }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+              >
+                <img
+                  ref={imageRef}
+                  src={imagePreview}
+                  alt="preview"
+                  className="absolute inset-0 w-full h-full"
+                  style={{
+                    objectFit: "contain",
+                    transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+                    transformOrigin: "center",
+                    transition: isDragging ? "none" : "transform 0.1s ease-out",
+                  }}
                 />
               </div>
 
-              {/* Zoom Control Slider */}
-              <div className="flex items-center gap-3 py-2">
+              {/* Zoom Control */}
+              <div className="flex items-center gap-3">
                 <label className="text-white text-sm font-medium min-w-14">Zoom:</label>
                 <input
                   type="range"
@@ -231,12 +276,10 @@ export default function CreatePostPage() {
               </div>
 
               {/* Info Text */}
-              <p className="text-white/60 text-xs text-center">
-                Drag to reposition • Use slider, scroll wheel, or pinch to zoom
-              </p>
+              <p className="text-white/60 text-sm text-center">Drag to pan • Use zoom slider to adjust</p>
 
               {/* Change Image Button */}
-              <label className="px-4 py-2 bg-pink-500/80 hover:bg-pink-500/60 text-white rounded-md text-center cursor-pointer transition font-medium text-sm">
+              <label className="px-4 py-2 bg-pink-500/80 hover:bg-pink-500/60 text-white rounded-md text-center cursor-pointer transition font-medium hover:cursor-pointer">
                 Change Image
                 <input
                   type="file"
@@ -266,14 +309,14 @@ export default function CreatePostPage() {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={!imagePreview || loading}
-            className="px-6 py-3 bg-pink-500 hover:bg-pink-500/80 disabled:bg-pink-500/30 text-white rounded-md font-semibold transition hover:cursor-pointer disabled:cursor-not-allowed"
+            disabled={!selectedImage || loading}
+            className="px-6 py-3 bg-pink-500 hover:bg-pink-500/80 disabled:bg-pink/50 text-white rounded-md font-semibold transition hover:cursor-pointer disabled:cursor-not-allowed"
           >
             {loading ? "Creating..." : "Create Post"}
           </button>
         </form>
 
-        {/* Hidden canvas for canvas image generation */}
+        {/* Hidden canvas for cropping */}
         <canvas ref={canvasRef} className="hidden" />
       </div>
     </div>
