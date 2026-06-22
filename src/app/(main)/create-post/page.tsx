@@ -133,6 +133,7 @@ export default function CreatePostPage() {
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       const data = await response.json();
