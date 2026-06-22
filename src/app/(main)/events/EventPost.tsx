@@ -14,6 +14,7 @@ const EventPost = ({ id, username, title, description, location, start_time }: E
     });
   }
   return (
+    <Link href={`events/${id}`}>
     <div className="max-w-200 shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
@@ -38,6 +39,7 @@ const EventPost = ({ id, username, title, description, location, start_time }: E
       /> */}
       <p>{description}</p>
     </div>
+    </Link>
   )
 }
 
