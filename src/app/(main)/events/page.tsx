@@ -13,6 +13,7 @@ export type Event = {
   description: string
   location: string
   start_time: string
+  url: string
 }
 
 const STORAGE_KEY = "nusphere-events"
@@ -72,7 +73,7 @@ const page = () => {
     async function loadEvents() {
       try {
         setLoading(true)
-        const response = await fetchBackendClient<ApiResponse<Event[]>>("/events/", "GET");
+        const response = await fetchBackendClient<ApiResponse<Event[]>>("/events", "GET");
         setEvents(response.data)
       } catch (error) {
         console.log(error)

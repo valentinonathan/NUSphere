@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import type { Event } from "./page"
 
-const EventPost = ({ id, username, title, description, location, start_time }: Event) => {
+const EventPost = ({ id, username, title, description, location, start_time, url }: Event) => {
   function formatEventTime(timestamp: string) {
     return new Date(timestamp).toLocaleString("en-US", {
       weekday: "long",
@@ -15,13 +15,27 @@ const EventPost = ({ id, username, title, description, location, start_time }: E
   }
   return (
     <Link href={`events/${id}`}>
-    <div className="max-w-200 shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
+    <div className="w-full max-w-200 shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold">{title}</h2>
-          <h3>Venue: {location}</h3>
-          <p className="text-sm text-slate-600">Event will start on {formatEventTime(start_time)}</p>
-          <p className="text-sm text-slate-500">created by {username}</p>
+          <img src={url} className="mb-3 h-75 w-3xl rounded-md object-cover"/>
+          <h3>
+            <span className="font-semibold text-white">Date: </span> 
+            {formatEventTime(start_time)}
+          </h3> 
+          <h3>
+            <span className="font-semibold text-white">Venue: </span> 
+            {location}
+          </h3>
+          <h3>
+            <span className="font-semibold text-white">Host: </span> 
+            @{username}
+          </h3>
+          <h3>
+            <span className="font-semibold text-white">Description: </span> 
+            {description}
+          </h3>
         </div>
         {/* <Link
           href={`/events/edit?id=${id}`}
@@ -37,7 +51,7 @@ const EventPost = ({ id, username, title, description, location, start_time }: E
         alt={title}
         className="mb-3 h-100 w-200 rounded-md object-cover"
       /> */}
-      <p>{description}</p>
+      
     </div>
     </Link>
   )

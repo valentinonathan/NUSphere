@@ -15,6 +15,7 @@ type Event = {
     description: string
     location: string
     start_time: string
+    url: string
 }
 
 type Attendee = {
@@ -172,6 +173,8 @@ export default function EventDetailPage() {
                         <p className="text-sm text-white/70">By {event.username}</p>
                     </div>
                 </div>
+
+                <img src={event.url} className="mb-3 h-75 w-3xl rounded-md object-cover"/>
 
                 <div className="space-y-3 text-sm text-white/80">
                     <p>
