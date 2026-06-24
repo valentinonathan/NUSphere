@@ -1,246 +1,103 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import ChatSidebar from "./ChatSidebar"
-import ChatWindow from "./ChatWindow"
-import ChatInput from "./ChatInput"
-import styles from "./chat.module.css"
+import { useEffect, useState } from "react";
+import { socket } from "@/app/api/socket/route";
 
-export type Conversation = {
-    id: string;
-    name: string;
-    lastMessage: string;
-    time: string;
-    unreadCount?: number;
+type Message = {
+  id?: string;
+  sender_id?: number;
+  content: string;
+  created_at?: string;
 };
 
-export type Message = {
-    id: string;
-    sender: string;
-    text: string;
-    timestamp: string;
-};
+export default function ChatPage() {
+  const [conversationId] = useState("1");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [content, setContent] = useState("");
 
-export type MessageHistory = {
-    [conversationId: string]: Message[];
-};
+  useEffect(() => {
+    const handleReceive = (message: Message) => {
+      setMessages((prev) => [...prev, message]);
+    };
 
-const initialConversations: Conversation[] = [
-    {
-        id: "1",
-        name: "Alice Johnson",
-        lastMessage: "Hey! Are we still meeting tomorrow?",
-        time: "09:15 AM",
-        unreadCount: 2,
-    },
-    {
-        id: "2",
-        name: "Michael Lee",
-        lastMessage: "I'll send the documents tonight.",
-        time: "08:42 AM",
-    },
-    {
-        id: "3",
-        name: "Emma Wilson",
-        lastMessage: "That sounds great 😂",
-        time: "Yesterday",
-        unreadCount: 5,
-    },
-    {
-        id: "4",
-        name: "Team Design",
-        lastMessage: "New mockups have been uploaded.",
-        time: "Yesterday",
-    },
-    {
-        id: "5",
-        name: "David Kim",
-        lastMessage: "Can you review my PR?",
-        time: "Monday",
-        unreadCount: 1,
-    },
-    {
-        id: "6",
-        name: "Sophia Martinez",
-        lastMessage: "Thanks for your help 🙌",
-        time: "Sunday",
-    },
-    {
-        id: "7",
-        name: "Family Group",
-        lastMessage: "Dinner at 7 PM tonight.",
-        time: "Saturday",
-        unreadCount: 8,
-    },
-    {
-        id: "8",
-        name: "John Carter",
-        lastMessage: "See you at the airport.",
-        time: "Friday",
-    },
-     // New Conversations
+    const handleConversationError = (err: { message: string }) => {
+      alert(err.message);
+    };
 
-    {
-        id: "9",
-        name: "Lucas Brown",
-        lastMessage: "Did you finish the assignment?",
-        time: "11:24 AM",
-        unreadCount: 3,
-    },
-    {
-        id: "10",
-        name: "Sarah Chen",
-        lastMessage: "Coffee later today?",
-        time: "10:17 AM",
-    },
-    {
-        id: "11",
-        name: "Frontend Team",
-        lastMessage: "Deployment completed successfully.",
-        time: "09:50 AM",
-    },
-    {
-        id: "12",
-        name: "Olivia Davis",
-        lastMessage: "I'll call you tonight.",
-        time: "Yesterday",
-        unreadCount: 1,
-    },
-    {
-        id: "13",
-        name: "Gaming Squad",
-        lastMessage: "Who's online right now?",
-        time: "Yesterday",
-        unreadCount: 6,
-    },
-    {
-        id: "14",
-        name: "Daniel Garcia",
-        lastMessage: "The API issue is fixed.",
-        time: "Tuesday",
-    },
-    {
-        id: "15",
-        name: "UI/UX Group",
-        lastMessage: "New design system proposal shared.",
-        time: "Tuesday",
-    },
-];
+    const handleMessageError = (err: { message: string }) => {
+      alert(err.message);
+    };
 
-const initialMessages: MessageHistory = {
-    "1": [
-        {
-            id: "m1",
-            sender: "Alice Johnson",
-            text: "Hey!",
-            timestamp: "09:00 AM",
-        },
-        {
-            id: "m2",
-            sender: "me",
-            text: "Hello 👋",
-            timestamp: "09:01 AM",
-        },
-    ],
-    "2": [
-        {
-            id: "m3",
-            sender: "Michael Lee",
-            text: "Documents sent.",
-            timestamp: "08:40 AM",
-        },
-    ],
-    "3": [
-        {
-            id: "m4",
-            sender: "Emma Wilson",
-            text: "That sounds great 😂",
-            timestamp: "Yesterday",
-        },
-    ],
-};
+    socket.on("message:receive", handleReceive);
+    socket.on("conversation:error", handleConversationError);
+    socket.on("message:error", handleMessageError);
 
-const formatTimestamp = (date: Date) => {
-    const hours = date.getHours()
-    const minutes = date.getMinutes().toString().padStart(2, "0")
-    const period = hours >= 12 ? "PM" : "AM"
-    const adjusted = hours % 12 || 12
-    return `${adjusted}:${minutes} ${period}`
-}
+    socket.connect();
 
-const page = () => {
-    const [activeConversationId, setActiveConversationId] = useState(initialConversations[0].id)
-    const [conversationList, setConversationList] = useState<Conversation[]>(initialConversations)
-    const [messageHistory, setMessageHistory] = useState<MessageHistory>(initialMessages)
+    socket.once("connect", () => {
+      socket.emit("conversation:join", Number(conversationId));
+    });
 
-    const activeConversation = useMemo(
-        () => conversationList.find((conversation) => conversation.id === activeConversationId) ?? conversationList[0],
-        [activeConversationId, conversationList],
-    )
+    return () => {
+      socket.off("message:receive", handleReceive);
+      socket.off("conversation:error", handleConversationError);
+      socket.off("message:error", handleMessageError);
+      socket.disconnect();
+    };
+  }, [conversationId]);
 
-    const activeMessages = messageHistory[activeConversationId] ?? []
+  const sendMessage = () => {
+    if (!content.trim()) return;
 
-    const updateActiveConversation = (conversationId: string) => {
-        setActiveConversationId(conversationId)
-        setConversationList((current) =>
-            current.map((conversation) =>
-                conversation.id === conversationId
-                    ? { ...conversation, unreadCount: 0 }
-                    : conversation,
-            ),
-        )
-    }
+    socket.emit("message:send", {
+      conversationId: Number(conversationId),
+      content,
+    });
 
-    const sendMessage = (text: string) => {
-        const trimmed = text.trim()
-        if (!trimmed) return
+    setContent("");
+  };
 
-        const timestamp = formatTimestamp(new Date())
-        const newMessage: Message = {
-            id: `m-${Date.now()}`,
-            sender: "me",
-            text: trimmed,
-            timestamp,
-        }
+  return (
+    <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-4 p-6">
+      <div className="rounded-xl border p-4">
+        <h1 className="text-xl font-semibold">Chat</h1>
+        <p className="text-sm text-gray-500">Conversation {conversationId}</p>
+      </div>
 
-        setMessageHistory((current) => ({
-            ...current,
-            [activeConversationId]: [...(current[activeConversationId] ?? []), newMessage],
-        }))
-
-        setConversationList((current) =>
-            current.map((conversation) =>
-                conversation.id === activeConversationId
-                    ? { ...conversation, lastMessage: trimmed, time: timestamp, unreadCount: 0 }
-                    : conversation,
-            ),
-        )
-    }
-
-    return (
-        <div className={`flex h-screen text-foreground overflow-hidden`}>
-            <aside className="w-72 shrink-0 border-r p-4 bg-white/30">
-                <div className="mb-4 text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                    Conversations
-                </div>
-                <ChatSidebar
-                    conversations={conversationList}
-                    activeConversationId={activeConversationId}
-                    onSelectConversation={updateActiveConversation}
-                />
-            </aside>
-
-            <div className="flex flex-1 flex-col bg-white/30">
-                <main className="flex-1 overflow-hidden">
-                    <ChatWindow conversation={activeConversation} messages={activeMessages} />
-                </main>
-
-                <footer className="border-t border-border px-4 py-3">
-                    <ChatInput onSendMessage={sendMessage} />
-                </footer>
-            </div>
+      <div className="flex-1 rounded-xl border p-4">
+        <div className="mb-4 h-[500px] space-y-2 overflow-y-auto rounded border p-3">
+          {messages.length === 0 ? (
+            <p className="text-sm text-gray-500">No messages yet</p>
+          ) : (
+            messages.map((msg, index) => (
+              <div key={msg.id ?? index} className="rounded bg-gray-100 p-2">
+                <p className="text-sm">{msg.content}</p>
+                {msg.created_at && (
+                  <p className="text-xs text-gray-500">{msg.created_at}</p>
+                )}
+              </div>
+            ))
+          )}
         </div>
-    )
-}
 
-export default page
+        <div className="flex gap-2">
+          <input
+            className="flex-1 rounded border px-3 py-2"
+            placeholder="Type a message..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") sendMessage();
+            }}
+          />
+          <button
+            className="rounded bg-blue-600 px-4 py-2 text-white"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
