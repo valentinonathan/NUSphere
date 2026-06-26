@@ -3,21 +3,21 @@
 import { useEffect, useState } from "react";
 import { socket } from "@/app/api/socket/route";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
+import { isUndefined } from "util";
 
 type Message = {
     id?: number;
     sender_id?: number;
     content: string;
-    created_at?: string;
+    created_at: string;
 };
 
 type ConversationResponseSuccess = {
-    userId?: number;
-    conversation?: {
+    userId: number;
+    conversation: {
         id: number;
     };
-    messages?: Message[];
-    message?: string;
+    messages: Message[];
 };
 
 type ErrorResponse = {
@@ -28,7 +28,7 @@ type ConversationResponse = ConversationResponseSuccess | ErrorResponse
 
 
 export default function ChatPage() {
-    const [conversationId, setConversationId] = useState<number | null>(null);
+    const [conversationId, setConversationId] = useState<number>(-1);
     const [messages, setMessages] = useState<Message[]>([]);
     const [content, setContent] = useState("");
     const [receiverUsername, setReceiverUsername] = useState("");
@@ -85,16 +85,16 @@ export default function ChatPage() {
             if ("message" in result) {
                 throw new Error(result.message)
             } else {
-                setConversationId(result.conversation.id);
-                setMessages(result.messages ?? []);
-                setUserId(result.userId);
+                setConversationId(result.conversation?.id)
+                setMessages(result.messages)
+                setUserId(result.userId)
             }
-
-
-
         } catch (error) {
-            setError(error);
-            alert("User not found or conversation could not be created");
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError("Something went wrong.");
+            }
         }
     };
 
@@ -216,7 +216,7 @@ export default function ChatPage() {
             </div>
 
             <div className="min-h-0 flex gap-4 flex-col p-6 overflow-y-auto shadow-black/10 shadow-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md">
-                {messages.map((msg) => {
+                {messages?.map((msg) => {
                     const isMine = msg.sender_id === userId;
 
                     return (
