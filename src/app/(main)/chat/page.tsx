@@ -33,6 +33,7 @@ export default function ChatPage() {
     const [content, setContent] = useState("");
     const [receiverUsername, setReceiverUsername] = useState("");
     const [userId, setUserId] = useState<number>(-1);
+    const [error, setError] = useState("");
 
     useEffect(() => {
         const handleReceive = (message: Message) => {
@@ -73,24 +74,26 @@ export default function ChatPage() {
         if (!username) return;
 
         try {
-            const result : ConversationResponse = await fetchBackendClient<ConversationResponse>(
+            const result: ConversationResponse = await fetchBackendClient<ConversationResponse>(
                 "/conversations/direct",
                 "POST",
                 {
                     receiverUsername: username,
                 }
             );
-            
+
             if ("message" in result) {
                 throw new Error(result.message)
-            } 
-            
+            } else {
+                setConversationId(result.conversation.id);
+                setMessages(result.messages ?? []);
+                setUserId(result.userId);
+            }
 
-            setConversationId(result.conversation.id);
-            setMessages(result.messages ?? []);
-            setUserId(result.userId);
+
+
         } catch (error) {
-            console.error(error);
+            setError(error);
             alert("User not found or conversation could not be created");
         }
     };
@@ -188,6 +191,7 @@ export default function ChatPage() {
                 <div className="mb-4 flex items-start justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold">Chat</h1>
+                        {error != "" && <p className="text-sm text-red/70"></p>}
                         <p className="text-sm text-white/70">
                             {conversationId ? `Conversation ${conversationId}` : "No conversation selected"}
                         </p>
@@ -223,16 +227,16 @@ export default function ChatPage() {
                         >
                             <div
                                 className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-md ${isMine
-                                        ? "bg-pink-500 text-white rounded-br-sm"
-                                        : "bg-white/15 text-white rounded-bl-sm"
+                                    ? "bg-pink-500 text-white rounded-br-sm"
+                                    : "bg-white/15 text-white rounded-bl-sm"
                                     }`}
                             >
                                 <p className="break-words">{msg.content}</p>
 
                                 <p
                                     className={`mt-1 text-right text-[11px] ${isMine
-                                            ? "text-white/70"
-                                            : "text-white/50"
+                                        ? "text-white/70"
+                                        : "text-white/50"
                                         }`}
                                 >
                                     {formatTimestamp(msg.created_at)}
