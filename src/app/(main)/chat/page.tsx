@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { socket } from "@/app/api/socket/route";
+import { socket } from "@/lib/socket";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
 import { isUndefined } from "util";
 
@@ -28,11 +28,11 @@ type ConversationResponse = ConversationResponseSuccess | ErrorResponse
 
 
 export default function ChatPage() {
-    const [conversationId, setConversationId] = useState<number>(-1);
+    const [conversationId, setConversationId] = useState<number | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [content, setContent] = useState("");
     const [receiverUsername, setReceiverUsername] = useState("");
-    const [userId, setUserId] = useState<number>(-1);
+    const [userId, setUserId] = useState<number>();
     const [error, setError] = useState("");
 
     useEffect(() => {
