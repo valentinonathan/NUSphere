@@ -87,3 +87,163 @@ NUSphere follows a `Feature Branching Strategy`, where each new feature or bug f
 ![SignUp Page](./screenshots/Signup.png)
 ### Account Form Page
 ![Account Form Page](./screenshots/Profile-details.png)
+### Event Page
+![Event Page](./screenshots/Events.png)
+### Create Event Page
+![Create Event Page](./screenshots/Create-events.png)
+### Event Attendance
+![Event Attendance Page](./screenshots/events-attendance.png)
+
+## Testing
+### Unit Testing
+For unit testing, Vitest was used to verify the business logic implemented in the backend. The test cases focused on validating individual service-layer functions in isolation by mocking database interactions, ensuring that the core application logic behaved correctly under both normal and exceptional conditions. 
+
+A total of 82 unit tests were executed across 31 test suites, with all tests passing successfully. These tests covered key backend functionalities, including user authentication, event management, conversations, comments, posts, friend requests, and user services.
+
+### Summary
+
+| Metric | Result |
+|--------|--------|
+| Test Suites | 31 / 31 Passed |
+| Tests | 82 / 82 Passed |
+| Failed Tests | 0 |
+
+---
+
+### auth.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| auth.service > validateUser > throws when username is not found | ✅ Pass | 5 ms |
+| auth.service > validateUser > throws when password does not match | ✅ Pass | 1 ms |
+| auth.service > validateUser > returns a token when credentials are valid | ✅ Pass | 4 ms |
+| auth.service > createAccount > throws when username is already used | ✅ Pass | 1 ms |
+| auth.service > createAccount > throws when user insert does not succeed | ✅ Pass | 1 ms |
+| auth.service > createAccount > returns a token after successfully creating a new account | ✅ Pass | 1 ms |
+| auth.service > editAccountDetails > throws when update does not affect exactly one row | ✅ Pass | 1 ms |
+| auth.service > editAccountDetails > succeeds when update affects one row | ✅ Pass | 1 ms |
+
+---
+
+### comment.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| comment.service > getCommentByPostId > throws when post does not exist | ✅ Pass | 6 ms |
+| comment.service > getCommentByPostId > returns comments and count when post exists | ✅ Pass | 2 ms |
+| comment.service > postCommentByPostId > throws when post does not exist | ✅ Pass | 1 ms |
+| comment.service > postCommentByPostId > throws when comment insert fails | ✅ Pass | 1 ms |
+| comment.service > postCommentByPostId > throws when comment count increment fails and rolls back | ✅ Pass | 2 ms |
+| comment.service > postCommentByPostId > returns the created comment with user name data | ✅ Pass | 1 ms |
+
+---
+
+### conversation.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| conversation.service > throws when sender or receiver is invalid | ✅ Pass | 5 ms |
+| conversation.service > throws when sender and receiver are the same | ✅ Pass | 1 ms |
+| conversation.service > throws when receiver does not exist | ✅ Pass | 5 ms |
+| conversation.service > returns an existing conversation when one already exists | ✅ Pass | 2 ms |
+| conversation.service > returns a conversation and message list when creating a conversation with initial message | ✅ Pass | 2 ms |
+| conversation.service > returns conversation rows for getConversationsByUserId | ✅ Pass | 1 ms |
+| conversation.service > throws when getMessagesByConversation access is denied | ✅ Pass | 1 ms |
+| conversation.service > returns messages when getMessagesByConversation succeeds | ✅ Pass | 1 ms |
+| conversation.service > throws when createMessage access is denied | ✅ Pass | 1 ms |
+| conversation.service > creates a message when user is in the conversation | ✅ Pass | 1 ms |
+| conversation.service > returns true when user is in a conversation | ✅ Pass | 1 ms |
+| conversation.service > returns false when user is not in a conversation | ✅ Pass | 0 ms |
+
+---
+
+### event.attendance.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| event.attendance.service > returns attendance info when event exists | ✅ Pass | 4 ms |
+| event.attendance.service > throws when createEventAttendance user does not exist | ✅ Pass | 2 ms |
+| event.attendance.service > throws when createEventAttendance event does not exist | ✅ Pass | 0 ms |
+| event.attendance.service > throws when createEventAttendance is duplicated | ✅ Pass | 1 ms |
+| event.attendance.service > succeeds when createEventAttendance inserts a row | ✅ Pass | 1 ms |
+| event.attendance.service > throws when deleteEventAttendance user does not exist | ✅ Pass | 1 ms |
+| event.attendance.service > throws when deleteEventAttendance event does not exist | ✅ Pass | 0 ms |
+| event.attendance.service > throws when deleteEventAttendance is not found | ✅ Pass | 0 ms |
+| event.attendance.service > succeeds when deleteEventAttendance removes the event attendance | ✅ Pass | 0 ms |
+
+---
+
+### event.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| event.service > returns event rows from getEvent | ✅ Pass | 4 ms |
+| event.service > returns a single event from getIndividualEvent | ✅ Pass | 1 ms |
+| event.service > throws when createEvent does not insert a row | ✅ Pass | 2 ms |
+| event.service > succeeds when createEvent inserts a row | ✅ Pass | 1 ms |
+
+---
+
+### friendRequests.services.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| friendRequests.services > friendRequest > throws when receiver does not exist | ✅ Pass | 6 ms |
+| friendRequests.services > friendRequest > throws when trying to friend yourself | ✅ Pass | 1 ms |
+| friendRequests.services > friendRequest > returns isFriend when friendship already exists | ✅ Pass | 2 ms |
+| friendRequests.services > friendRequest > creates a friend request when none exists | ✅ Pass | 1 ms |
+| friendRequests.services > unfriendRequest > throws when receiver does not exist | ✅ Pass | 1 ms |
+| friendRequests.services > unfriendRequest > returns isNotFriend when no existing friendship exists | ✅ Pass | 0 ms |
+| friendRequests.services > unsendFriendRequest > throws when receiver does not exist | ✅ Pass | 1 ms |
+| friendRequests.services > unsendFriendRequest > throws when sender and receiver are the same | ✅ Pass | 1 ms |
+| friendRequests.services > unsendFriendRequest > returns isNotFriend when deletion succeeds | ✅ Pass | 1 ms |
+| friendRequests.services > rejectFriendRequest > throws when sender does not exist | ✅ Pass | 1 ms |
+| friendRequests.services > rejectFriendRequest > throws when rejecting your own request | ✅ Pass | 1 ms |
+| friendRequests.services > rejectFriendRequest > returns Rejected when request exists | ✅ Pass | 0 ms |
+| friendRequests.services > friendRequestStatus > returns sameAccount when sender and receiver are the same | ✅ Pass | 1 ms |
+| friendRequests.services > friendRequestStatus > returns isFriend when users are already friends | ✅ Pass | 0 ms |
+| friendRequests.services > friendRequestStatus > returns hasBeenRequested when the receiver already sent a request | ✅ Pass | 0 ms |
+| friendRequests.services > friendRequestStatus > returns requestSuccess when the sender already sent a request | ✅ Pass | 0 ms |
+| friendRequests.services > friendRequestStatus > throws if receiver does not exist | ✅ Pass | 1 ms |
+| friendRequests.services > getAllIncomingFriendRequests > returns incoming requests | ✅ Pass | 0 ms |
+
+---
+
+### post.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| post.service > throws when getPostsByUserId user does not exist | ✅ Pass | 7 ms |
+| post.service > returns posts when getPostsByUserId succeeds | ✅ Pass | 2 ms |
+| post.service > throws when getPostsByUsername does not exist | ✅ Pass | 1 ms |
+| post.service > returns posts when getPostsByUsername succeeds | ✅ Pass | 1 ms |
+| post.service > throws when getPostById is not found | ✅ Pass | 1 ms |
+| post.service > returns a post when getPostById succeeds | ✅ Pass | 0 ms |
+| post.service > throws when likePostById receives invalid post | ✅ Pass | 1 ms |
+| post.service > likes a post successfully | ✅ Pass | 1 ms |
+| post.service > throws when unlikePostById receives invalid post | ✅ Pass | 1 ms |
+| post.service > unlikes a post successfully | ✅ Pass | 1 ms |
+| post.service > returns false when hasLiked is false | ✅ Pass | 1 ms |
+| post.service > returns true when hasLiked is true | ✅ Pass | 0 ms |
+| post.service > creates a post successfully | ✅ Pass | 0 ms |
+| post.service > throws when updateNewPostUser receives invalid user | ✅ Pass | 1 ms |
+| post.service > succeeds updateNewPostUser for valid user | ✅ Pass | 0 ms |
+| post.service > returns feed results for page 2 | ✅ Pass | 1 ms |
+| post.service > returns feed results for page 1 and prepends new post when available | ✅ Pass | 0 ms |
+
+---
+
+### user.service.test.js
+
+| Test Case | Status | Duration |
+|-----------|--------|----------|
+| user.service > getUserDetailsByUsername > throws when username is not found | ✅ Pass | 5 ms |
+| user.service > getUserDetailsByUsername > returns user details when found | ✅ Pass | 1 ms |
+| user.service > getUserDetailsByUserId > throws when user id is not found | ✅ Pass | 1 ms |
+| user.service > getUserDetailsByUserId > returns user details when found | ✅ Pass | 1 ms |
+| user.service > processQueryUserToDbQuery > builds a strict query for one filter | ✅ Pass | 1 ms |
+| user.service > processQueryUserToDbQuery > builds a non-strict query with multiple filters | ✅ Pass | 0 ms |
+| user.service > processQueryUserToDbQuery > ignores empty and undefined query values | ✅ Pass | 0 ms |
+| user.service > getUserByQuery > adds limit and offset and returns query results | ✅ Pass | 1 ms |
+
+---
