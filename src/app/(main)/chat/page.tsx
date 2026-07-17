@@ -9,7 +9,7 @@ type ErrorMessage = {
 }
 
 type ConversationResponse = {
-    myUserId : number
+    myUserId: number
     conversationId: number
     messages: Message[]
 }
@@ -59,7 +59,7 @@ export default function ChatPage() {
             console.log(`Left Conversation${conversationId}`)
         })
 
-        socket.connect();
+        
 
         return () => {
             socket.off("connect");
@@ -73,6 +73,15 @@ export default function ChatPage() {
 
     const startConversation = async () => {
         try {
+            let tokenData = await fetch("api/socket-token")
+            const tokenData2: {token : string} = await tokenData.json();
+
+            socket.auth = {
+                token : tokenData2.token
+            }
+
+            socket.connect();
+
             const response = await fetchBackendClient<ConversationResponse | ErrorMessage>("/conversations", "POST", { receiverUsername: receiver });
 
             if ("message" in response) {
@@ -139,9 +148,9 @@ export default function ChatPage() {
                     {messages.map((msg) => (
                         msg.sender_id == myUserId ?
                             <p className="self-end w-fit h-fit shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-2" key={msg.created_at}>{msg.content}</p>
-                        :
+                            :
                             <p className="self-start w-fit h-fit shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-2" key={msg.created_at}>{msg.content}</p>
-                        
+
                     ))}
                 </div>
                 <div className="flex flex-row w-full">
