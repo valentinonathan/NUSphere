@@ -34,7 +34,7 @@ export default function ChatPage() {
         });
 
         socket.on("chat:message", (message) => {
-            setMessages((prev) => [...prev, message.text]);
+            setMessages((prev) => [...prev, message]);
         });
 
         socket.on("room:joined", ({ conversationId }) => {
@@ -44,6 +44,10 @@ export default function ChatPage() {
         socket.on("connect_error", (err) => {
             console.log("connect_error:", err.message);
         });
+
+        socket.on("chat:error", ({message}) => {
+            console.log("chat:error : ", message)
+        })
 
         socket.on("error", ({ message }) => {
             console.log(`Error Message: ${message}`)
@@ -58,6 +62,9 @@ export default function ChatPage() {
         return () => {
             socket.off("connect");
             socket.off("chat:message");
+            if (!conversationId) {
+                socket.emit("roof:left", conversationId);
+            }
             socket.disconnect();
         };
     }, []);
@@ -70,7 +77,7 @@ export default function ChatPage() {
                 setErrorMessage(response.message);
                 setConversationId(null);
             } else {
-                
+
                 setConversationId(response.conversationId);
                 setMessages((prev) => [...response.messages, ...prev])
                 setErrorMessage("");
@@ -85,11 +92,20 @@ export default function ChatPage() {
     }
 
     const sendMessage = () => {
-        socket.emit("chat:message", {
-            conversationId,
-            text,
-        });
-        setText("");
+        try {
+            if (!conversationId) {
+                throw new Error("You have not started a conversation");
+            }
+            socket.emit("chat:message", {
+                conversationId,
+                text,
+            });
+            setText("");
+        } catch (error) {
+            error instanceof Error ? setErrorMessage(error.message) : "Failed to send message";
+        }
+
+
     };
 
     return (
