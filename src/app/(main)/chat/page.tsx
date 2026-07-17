@@ -9,6 +9,7 @@ type ErrorMessage = {
 }
 
 type ConversationResponse = {
+    myUserId : number
     conversationId: number
     messages: Message[]
 }
@@ -27,6 +28,7 @@ export default function ChatPage() {
     const [text, setText] = useState("");
     const [conversationId, setConversationId] = useState<null | Number>(null);
     const [errorMessage, setErrorMessage] = useState("");
+    const [myUserId, setMyUserId] = useState<null | Number>(null);
 
     useEffect(() => {
         socket.on("connect", () => {
@@ -45,7 +47,7 @@ export default function ChatPage() {
             console.log("connect_error:", err.message);
         });
 
-        socket.on("chat:error", ({message}) => {
+        socket.on("chat:error", ({ message }) => {
             console.log("chat:error : ", message)
         })
 
@@ -79,7 +81,8 @@ export default function ChatPage() {
             } else {
 
                 setConversationId(response.conversationId);
-                setMessages((prev) => [...response.messages, ...prev])
+                setMyUserId(response.myUserId);
+                setMessages(response.messages)
                 setErrorMessage("");
 
                 socket.emit("join-conversation", { conversationId: response.conversationId });
@@ -87,6 +90,7 @@ export default function ChatPage() {
         } catch (err) {
             setErrorMessage(err instanceof Error ? err.message : "Failed to start conversation");
             setConversationId(null);
+            setMyUserId(null);
         }
 
     }
@@ -108,30 +112,49 @@ export default function ChatPage() {
 
     };
 
+    // <div className="w-full max-w-200 shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
+
     return (
-        <div>
-            {errorMessage != "" && <h2>Error Message: {errorMessage} </h2>}
-            {conversationId && <h1>Conversation ID: {conversationId?.toString()}</h1>}
-            <input
-                value={receiver}
-                onChange={(e) => setReceiver(e.target.value)}
-                placeholder="Start conversation with..."
-            />
-            <button onClick={startConversation}>Start</button>
-            <div>
-                {messages.map((msg) => (
-                    <p key={msg.created_at}>{msg.content}</p>
-                ))}
+        <div className="h-[calc(100vh-100px)] w-[calc(100vw-200px)] bg-white/20 flex flex-row p-3 gap-2">
+            <div className="flex flex-col">
+                <div>
+                    {errorMessage != "" && <h2>Error Message: {errorMessage} </h2>}
+                    {conversationId && <h1>Conversation ID: {conversationId?.toString()}</h1>}
+                </div>
+                <div className="flex">
+                    <input
+                        className="w-fit"
+                        value={receiver}
+                        onChange={(e) => setReceiver(e.target.value)}
+                        placeholder="Start conversation with..."
+                    />
+                    <button className="flex-1" onClick={startConversation}>Start</button>
+                </div>
+
             </div>
 
 
+            <div className="flex flex-1 flex-col h-full ">
+                <div className="flex gap-0.5 flex-1 flex-col overflow-y-auto">
+                    {messages.map((msg) => (
+                        msg.sender_id == myUserId ?
+                            <p className="self-end w-fit h-fit shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-2" key={msg.created_at}>{msg.content}</p>
+                        :
+                            <p className="self-start w-fit h-fit shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-2" key={msg.created_at}>{msg.content}</p>
+                        
+                    ))}
+                </div>
+                <div className="flex flex-row w-full">
+                    <input
+                        className="flex-1"
+                        value={text}
+                        onChange={(e) => setText(e.target.value)}
+                        placeholder="Type message..."
+                    />
+                    <button className="p-3" onClick={sendMessage}>Send</button>
+                </div>
+            </div>
 
-            <input
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Type message..."
-            />
-            <button onClick={sendMessage}>Send</button>
         </div>
     );
 }
