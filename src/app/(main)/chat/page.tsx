@@ -10,10 +10,19 @@ type ErrorMessage = {
 
 type ConversationResponse = {
     conversationId: number
+    messages: Message[]
+}
+
+type Message = {
+    id: number
+    conversation_id: number
+    sender_id: number
+    content: string
+    created_at: string
 }
 
 export default function ChatPage() {
-    const [messages, setMessages] = useState<string[]>([]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [receiver, setReceiver] = useState("");
     const [text, setText] = useState("");
     const [conversationId, setConversationId] = useState<null | Number>(null);
@@ -61,7 +70,9 @@ export default function ChatPage() {
                 setErrorMessage(response.message);
                 setConversationId(null);
             } else {
+                
                 setConversationId(response.conversationId);
+                setMessages((prev) => [...response.messages, ...prev])
                 setErrorMessage("");
 
                 socket.emit("join-conversation", { conversationId: response.conversationId });
@@ -75,6 +86,7 @@ export default function ChatPage() {
 
     const sendMessage = () => {
         socket.emit("chat:message", {
+            conversationId,
             text,
         });
         setText("");
@@ -91,8 +103,8 @@ export default function ChatPage() {
             />
             <button onClick={startConversation}>Start</button>
             <div>
-                {messages.map((msg, i) => (
-                    <p key={i}>{msg}</p>
+                {messages.map((msg) => (
+                    <p key={msg.created_at}>{msg.content}</p>
                 ))}
             </div>
 
