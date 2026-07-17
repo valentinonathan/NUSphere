@@ -1,268 +1,109 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { socket } from "@/lib/socket";
+import socket from "@/lib/socket";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
-import { isUndefined } from "util";
 
-type Message = {
-    id?: number;
-    sender_id?: number;
-    content: string;
-    created_at: string;
-};
-
-type ConversationResponseSuccess = {
-    userId: number;
-    conversation: {
-        id: number;
-    };
-    messages: Message[];
-};
-
-type ErrorResponse = {
-    message: string;
+type ErrorMessage = {
+    message: string
 }
 
-type ConversationResponse = ConversationResponseSuccess | ErrorResponse
-
+type ConversationResponse = {
+    conversationId: number
+}
 
 export default function ChatPage() {
-    const [conversationId, setConversationId] = useState<number | null>(null);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [content, setContent] = useState("");
-    const [receiverUsername, setReceiverUsername] = useState("");
-    const [userId, setUserId] = useState<number>();
-    const [error, setError] = useState("");
+    const [messages, setMessages] = useState<string[]>([]);
+    const [receiver, setReceiver] = useState("");
+    const [text, setText] = useState("");
+    const [conversationId, setConversationId] = useState<null | Number>(null);
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
-        const handleReceive = (message: Message) => {
-            setMessages((prev) => [...prev, message]);
-        };
+        socket.on("connect", () => {
+            console.log("Connected:", socket.id);
+        });
 
-        const handleConversationError = (err: { message: string }) => {
-            alert(err.message);
-        };
+        socket.on("chat:message", (message) => {
+            setMessages((prev) => [...prev, message.text]);
+        });
 
-        const handleMessageError = (err: { message: string }) => {
-            alert(err.message);
-        };
+        socket.on("room:joined", ({ conversationId }) => {
+            console.log(`Joined Conversation${conversationId}`);
+        })
 
-        socket.on("message:receive", handleReceive);
-        socket.on("conversation:error", handleConversationError);
-        socket.on("message:error", handleMessageError);
+        socket.on("connect_error", (err) => {
+            console.log("connect_error:", err.message);
+        });
+
+        socket.on("error", ({ message }) => {
+            console.log(`Error Message: ${message}`)
+        })
+
+        socket.on("room:left", ({ conversationId }) => {
+            console.log(`Left Conversation${conversationId}`)
+        })
 
         socket.connect();
 
         return () => {
-            socket.off("message:receive", handleReceive);
-            socket.off("conversation:error", handleConversationError);
-            socket.off("message:error", handleMessageError);
+            socket.off("connect");
+            socket.off("chat:message");
             socket.disconnect();
         };
     }, []);
 
-    useEffect(() => {
-        if (!conversationId) return;
-        socket.emit("conversation:join", conversationId);
-    }, [conversationId]);
-
-    const startConversation = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const username = receiverUsername.trim();
-        if (!username) return;
-
+    const startConversation = async () => {
         try {
-            const result: ConversationResponse = await fetchBackendClient<ConversationResponse>(
-                "/conversations/direct",
-                "POST",
-                {
-                    receiverUsername: username,
-                }
-            );
+            const response = await fetchBackendClient<ConversationResponse | ErrorMessage>("/conversations", "POST", { receiverUsername: receiver });
 
-            if ("message" in result) {
-                throw new Error(result.message)
+            if ("message" in response) {
+                setErrorMessage(response.message);
+                setConversationId(null);
             } else {
-                setConversationId(result.conversation?.id)
-                setMessages(result.messages)
-                setUserId(result.userId)
+                setConversationId(response.conversationId);
+                setErrorMessage("");
+
+                socket.emit("join-conversation", { conversationId: response.conversationId });
             }
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message);
-            } else {
-                setError("Something went wrong.");
-            }
+        } catch (err) {
+            setErrorMessage(err instanceof Error ? err.message : "Failed to start conversation");
+            setConversationId(null);
         }
-    };
+
+    }
 
     const sendMessage = () => {
-        if (!conversationId) {
-            alert("Start a conversation first");
-            return;
-        }
-
-        if (!content.trim()) return;
-
-        socket.emit("message:send", {
-            conversationId,
-            content,
+        socket.emit("chat:message", {
+            text,
         });
-
-        setContent("");
-    };
-
-    //   return (
-    //     <div className="flex flex-col">
-    //       <div className="border-b p-4">
-    //         <form onSubmit={startConversation} className="flex gap-2">
-    //           <input
-    //             placeholder="Start conversation with..."
-    //             onChange={(e) => setReceiverUsername(e.target.value)}
-    //             value={receiverUsername}
-    //             className="rounded border px-3 py-2"
-    //           />
-    //           <button type="submit" className="rounded bg-black px-4 py-2 text-white">
-    //             Start
-    //           </button>
-    //         </form>
-    //       </div>
-
-    //       <div className="mx-auto flex min-h-screen max-w-2xl flex-col gap-4 p-6">
-    //         <div className="rounded-xl border p-4">
-    //           <h1 className="text-xl font-semibold">Chat</h1>
-    //           <p className="text-sm text-gray-500">
-    //             {conversationId ? `Conversation ${conversationId}` : "No conversation selected"}
-    //           </p>
-    //         </div>
-
-    //         <div className="flex-1 rounded-xl border p-4">
-    //           <div className="mb-4 h-[500px] space-y-2 overflow-y-auto rounded border p-3">
-    //             {messages.length === 0 ? (
-    //               <p className="text-sm text-gray-500">No messages yet</p>
-    //             ) : (
-    //               messages.map((msg, index) => (
-    //                 <div key={msg.id ?? index} className="rounded bg-gray-100 p-2">
-    //                   <p className="text-sm">{msg.content}</p>
-    //                   {msg.created_at && (
-    //                     <p className="text-xs text-gray-500">{msg.created_at}</p>
-    //                   )}
-    //                 </div>
-    //               ))
-    //             )}
-    //           </div>
-
-    //           <div className="flex gap-2">
-    //             <input
-    //               className="flex-1 rounded border px-3 py-2"
-    //               placeholder="Type a message..."
-    //               value={content}
-    //               onChange={(e) => setContent(e.target.value)}
-    //               onKeyDown={(e) => {
-    //                 if (e.key === "Enter") sendMessage();
-    //               }}
-    //             />
-    //             <button
-    //               className="rounded bg-blue-600 px-4 py-2 text-white"
-    //               onClick={sendMessage}
-    //             >
-    //               Send
-    //             </button>
-    //           </div>
-    //         </div>
-    //       </div>
-    //     </div>
-    //   );
-
-    const formatTimestamp = (timestamp: string) => {
-        return new Date(timestamp).toLocaleString("en-US", {
-            month: "short",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-        });
+        setText("");
     };
 
     return (
-        <div className="min-h-[100vh - 6.25rem] max-h-[100vh - 6.25rem] h-[100vh - 6.25rem] m-3 flex flex-col gap-2">
-            <div className="p-6 shadow-black/10 shadow-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md">
-                <div className="mb-4 flex items-start justify-between gap-4">
-                    <div>
-                        <h1 className="text-2xl font-bold">Chat</h1>
-                        {error != "" && <p className="text-sm text-red/70"></p>}
-                        <p className="text-sm text-white/70">
-                            {conversationId ? `Conversation ${conversationId}` : "No conversation selected"}
-                        </p>
-                    </div>
-                </div>
-
-                <div className="space-y-3 text-sm text-white/80">
-                    <form onSubmit={startConversation} className="flex gap-2">
-                        <input
-                            placeholder="Start conversation with..."
-                            onChange={(e) => setReceiverUsername(e.target.value)}
-                            value={receiverUsername}
-                            className="flex-1 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/50 outline-none"
-                        />
-                        <button type="submit">
-                            <div className="w-fit rounded-md bg-green-500 px-3 py-2 text-sm font-semibold text-white">
-                                Start
-                            </div>
-                        </button>
-                    </form>
-                </div>
+        <div>
+            {errorMessage != "" && <h2>Error Message: {errorMessage} </h2>}
+            {conversationId && <h1>Conversation ID: {conversationId?.toString()}</h1>}
+            <input
+                value={receiver}
+                onChange={(e) => setReceiver(e.target.value)}
+                placeholder="Start conversation with..."
+            />
+            <button onClick={startConversation}>Start</button>
+            <div>
+                {messages.map((msg, i) => (
+                    <p key={i}>{msg}</p>
+                ))}
             </div>
 
-            <div className="min-h-0 flex gap-4 flex-col p-6 overflow-y-auto shadow-black/10 shadow-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md">
-                {messages?.map((msg) => {
-                    const isMine = msg.sender_id === userId;
 
-                    return (
-                        <div
-                            key={msg.id}
-                            className={`flex ${isMine ? "justify-end" : "justify-start"
-                                }`}
-                        >
-                            <div
-                                className={`max-w-[70%] rounded-2xl px-4 py-2 shadow-md ${isMine
-                                    ? "bg-pink-500 text-white rounded-br-sm"
-                                    : "bg-white/15 text-white rounded-bl-sm"
-                                    }`}
-                            >
-                                <p className="break-words">{msg.content}</p>
 
-                                <p
-                                    className={`mt-1 text-right text-[11px] ${isMine
-                                        ? "text-white/70"
-                                        : "text-white/50"
-                                        }`}
-                                >
-                                    {formatTimestamp(msg.created_at)}
-                                </p>
-                            </div>
-                        </div>
-                    );
-                })}
-
-                <div className="flex gap-2">
-                    <input
-                        className="flex-1 rounded-md border border-white/20 bg-white/10 px-3 py-2 text-white placeholder:text-white/50 outline-none"
-                        placeholder="Type a message..."
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") sendMessage();
-                        }}
-                    />
-                    <button onClick={sendMessage}>
-                        <div className="w-fit rounded-md bg-blue-500 px-3 py-2 text-sm font-semibold text-white">
-                            Send
-                        </div>
-                    </button>
-                </div>
-            </div>
+            <input
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Type message..."
+            />
+            <button onClick={sendMessage}>Send</button>
         </div>
     );
 }
