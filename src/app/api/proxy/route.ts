@@ -32,3 +32,34 @@ export async function POST(req: Request) {
         status: response.status,
     });
 }
+
+export async function GET(req: Request) {
+    const { searchParams } = new URL(req.url);
+
+    const endpoint = searchParams.get("endpoint");
+
+    if (!endpoint) {
+        return Response.json(
+            { error: "Missing endpoint" },
+            { status: 400 }
+        );
+    }
+
+    const token = (await cookies()).get("token")?.value;
+
+    const response = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint,
+        {
+            method: "GET",
+            headers: {
+                Cookie: `token=${token}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+
+    return Response.json(data, {
+        status: response.status,
+    });
+}

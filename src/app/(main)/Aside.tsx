@@ -53,12 +53,14 @@ export default function Aside() {
                     <h1 className="">Market</h1>
                 </div>
 
+                <Link href="/modules">
                 <div className="flex items-center gap-5 justify-around hover:cursor-pointer text-white hover:text-white/60">
                     <div className="min-w-8 min-h-8 flex justify-center items-center">
                         <FaBook className="text-[163%]" />
                     </div>
                     <h1 className="">Modules</h1>
                 </div>
+                </Link>
             </nav>
         </aside>
     );
