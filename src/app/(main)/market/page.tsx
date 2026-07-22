@@ -5,7 +5,7 @@ import ProductCard from "./ProductCard"
 import { useEffect } from "react"
 import { fetchBackendClient } from "@/utils/fetch-backend-client"
 
-export type Listings = {
+export type Listing = {
     id: number,
     seller_id: number
     title: string
@@ -13,6 +13,7 @@ export type Listings = {
     price: number
     image_url: string
     created_at: string
+    seller_username: string
 }
 
 export type ApiResponse<T> = {
@@ -24,6 +25,7 @@ export type ProductCardType = {
     id: number
     image_url: string
     title: string
+    seller_username: string
 }
 
 const page = () => {

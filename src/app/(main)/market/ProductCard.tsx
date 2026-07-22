@@ -14,9 +14,9 @@ import Link from "next/link"
 
 const ProductCard = ({ id, image_url, title }: ProductCardType) => {
   return (
-    <Link href={`marketplace/${id}`}>
+    <Link href={`/market/${id}`}>
       <div className="shadow-black/10 shadow-md bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md p-4">
-        <img src={image_url} />
+        <img src={image_url} alt={title} />
         <p>{title}</p>
       </div>
     </Link>
