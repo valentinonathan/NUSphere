@@ -16,14 +16,14 @@ export default async function ModulesPage() {
                 <div className="flex flex-col gap-4">
                     <h2 className="text-3xl font-semibold">Your Modules:</h2>
                     <div className="flex gap-4 flex-wrap">
-                        {modules.map(m => <ModuleBox key={m.id} moduleCode={m.title} />)}
+                        {modules?.map(m => <ModuleBox key={m.id} moduleCode={m.title} />)}
                     </div>
                 </div>
 
                 <div className="flex flex-col gap-4">
                     <h2 className="text-3xl font-semibold">Explore Other Modules:</h2>
                     <div className="flex gap-4 flex-wrap">
-                        {feedModules.map(m => <ModuleBox key={m.id} moduleCode={m.title} />)}
+                        {feedModules?.map(m => <ModuleBox key={m.id} moduleCode={m.title} />)}
                     </div>
                 </div>
             </div>
