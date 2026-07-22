@@ -63,3 +63,32 @@ export async function GET(req: Request) {
         status: response.status,
     });
 }
+
+export async function DELETE(req: Request) {
+    const {
+        endpoint,
+        body,
+    } = await req.json();
+
+    const token = (await cookies()).get("token")?.value;
+
+    const response = await fetch(
+        process.env.NEXT_PUBLIC_BACKEND_URL! + endpoint,
+        {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: `token=${token}`,
+            },
+            ...(body && {
+                body: JSON.stringify(body),
+            }),
+        }
+    );
+
+    const data = await response.json();
+
+    return Response.json(data, {
+        status: response.status,
+    });
+}

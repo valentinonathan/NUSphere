@@ -21,7 +21,9 @@ export default function ModuleGeneral() {
         created_at: string,
         first_name: string,
         last_name: string,
-        module_title: string
+        module_title: string,
+        has_upvoted: boolean,
+        has_downvoted: boolean
     }
     type threads = {message: string, 0: thread[], 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
     

@@ -26,7 +26,9 @@ type thread = {
     created_at: string,
     first_name: string,
     last_name: string,
-    module_title: string
+    module_title: string,
+    has_upvoted: boolean,
+    has_downvoted: boolean
 }
 
 export default function Thread({thread}: {thread: thread}) {
@@ -43,33 +45,147 @@ export default function Thread({thread}: {thread: thread}) {
         created_at: string,
         first_name: string,
         last_name: string,
-        replies: reply[]
+        replies: reply[],
+        has_upvoted: boolean,
+        has_downvoted: boolean
     }
 
     const [replyButton, setReplyButton] = useState(false);
     const [isTextbox, setIsTextbox] = useState(false);
     const textboxRef = useRef<HTMLTextAreaElement | null>(null);
     const [replies, setReplies] = useState<reply[]>([]);
+    const [newReplies, setNewReplies] = useState<reply[]>([]);
+    const [upvoteButton, setUpvoteButton] = useState(thread?.has_upvoted);
+    const [upvote, setUpvote] = useState(thread?.upvote);
+    const [downvote, setDownvote] = useState(thread?.downvote);
+    const [downvoteButton, setDownvoteButton] = useState(thread?.has_downvoted);
     
     async function handleReplyButton() {
         const replies = await fetchBackendClient<reply[]>(`/modules/${thread?.module_title}/threads/${thread?.id}/replies`, "GET");
-        console.log(replies);
-        setReplies(replies);
-        setReplyButton(true);
+        if (replies?.length != undefined) {
+            setReplies(replies);
+            setReplyButton(true);
+        }
+    }
+
+    async function handlePostReply() {
+        type result = {message: string, reply: reply};
+        const replyBody = textboxRef?.current?.value;
+        const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/replies`, "POST", {parentReplyId: -1, reply: replyBody});
+        
+        if (result?.message == "Post thread reply successful") {
+            newReplies.push(result.reply);
+            setIsTextbox(false);
+            if (!replyButton) {
+                setReplyButton(true);
+            }
+        }
     }
 
     function handleTextbox() {
-        setIsTextbox(t => !t);
-        textboxRef?.current?.focus()
+        if (isTextbox) {
+            handlePostReply();
+        } else {
+            setIsTextbox(true);
+            textboxRef?.current?.focus()
+        }
+    }
+
+    async function handleUpvoteButton() {
+        type result = {message: string};
+        if (upvoteButton) {
+            setUpvoteButton(false);
+            setUpvote(u => u - 1);
+            const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/upvote`, "DELETE");
+            if (result?.message === undefined || result?.message != "Delete upvote successful") {
+                setUpvoteButton(true);
+                setUpvote(u => u + 1);
+            }
+        } else {
+            if (downvoteButton) {
+                setDownvoteButton(false);
+                setUpvoteButton(true);
+                setUpvote(u => u + 1);
+                setDownvote(d => d - 1);
+                const first = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/downvote`, "DELETE");
+                if (first?.message === undefined || first?.message != "Delete downvote successful") {
+                    setDownvoteButton(true);
+                    setUpvoteButton(false);
+                    setUpvote(u => u - 1);
+                    setDownvote(d => d + 1);
+                    return;
+                }
+                const second = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/upvote`, "POST");
+                if (second?.message === undefined || second?.message != "Upvote successful") {
+                    setDownvoteButton(true);
+                    setUpvoteButton(false);
+                    setUpvote(u => u - 1);
+                    setDownvote(d => d + 1);
+                    return;
+                }
+            } else {
+                setUpvoteButton(true);
+                setUpvote(u => u + 1);
+                const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/upvote`, "POST");
+                if (result?.message === undefined || result?.message != "Upvote successful") {
+                    setUpvoteButton(false);
+                    setUpvote(u => u - 1);
+                }
+            }
+        }
+    }
+
+    async function handleDownvoteButton() {
+        type result = {message: string};
+        if (downvoteButton) {
+            setDownvoteButton(false);
+            setDownvote(d => d - 1);
+            const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/downvote`, "DELETE");
+            if (result?.message === undefined || result?.message != "Delete downvote successful") {
+                setDownvoteButton(true);
+                setDownvote(d => d + 1);
+            }
+        } else {
+            if (upvoteButton) {
+                setUpvoteButton(false);
+                setDownvoteButton(true);
+                setDownvote(d => d + 1);
+                setUpvote(u => u - 1);
+                const first = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/upvote`, "DELETE");
+                if (first?.message === undefined || first?.message != "Delete upvote successful") {
+                    setUpvoteButton(true);
+                    setDownvoteButton(false);
+                    setDownvote(d => d - 1);
+                    setUpvote(u => u + 1);
+                    return;
+                }
+                const second = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/downvote`, "POST");
+                if (second?.message === undefined || second?.message != "Downvote successful") {
+                    setUpvoteButton(true);
+                    setDownvoteButton(false);
+                    setDownvote(d => d - 1);
+                    setUpvote(u => u + 1);
+                    return;
+                }
+            } else {
+                setDownvoteButton(true);
+                setDownvote(d => d + 1);
+                const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/downvote`, "POST");
+                if (result?.message === undefined || result?.message != "Downvote successful") {
+                    setDownvoteButton(false);
+                    setDownvote(d => d - 1);
+                }
+            }
+        }
     }
 
     return (
-        <div className="w-200 h-auto px-4 py-2 flex flex-col gap-2 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
+        <div className="w-200 h-auto p-4 flex flex-col gap-2 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
             <div className="w-200 h-auto flex flex-col gap-2">
                 <Link href={`/${thread?.username}`}>
                     <div className="flex gap-2">
-                            <AvatarWithOnline size="2" />
-                            <h3 className="w-full flex items-center font-semibold">{thread?.first_name} {thread?.last_name}</h3>
+                        <AvatarWithOnline size="2" />
+                        <h3 className="w-full flex items-center font-semibold">{thread?.first_name} {thread?.last_name}</h3>
                     </div>
                 </Link>
                 <h2 className="text-2xl font-semibold">{thread?.title}</h2>
@@ -79,14 +195,32 @@ export default function Thread({thread}: {thread: thread}) {
                 <p className="">{thread?.body}</p>
             </div>
             <div className="flex gap-3 h-8">
-                <div className="flex w-max py-1.5 px-2 bg-black/20 rounded-full text-[80%] gap-2">
-                    <div className="flex gap-1">
-                        <FaChevronUp className="text-white text-xl" />
-                        <h3 className="font-semibold">{formatNumber(thread?.upvote)}</h3>
+                <div className="flex w-max py-1.5 px-2 border-1 border-white/40 rounded-full text-[80%] gap-2" 
+                    style={upvoteButton 
+                            ? {background: "linear-gradient(to right, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
+                            : downvoteButton
+                                ? {background: "linear-gradient(to left, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
+                                : {background: "rgba(0, 0, 0, 0.2)"}
+                }>
+                    <div onClick={handleUpvoteButton} className="flex gap-1 hover:cursor-pointer"
+                        style={upvoteButton 
+                                ? {color: "rgba(255, 255, 255, 1)"} 
+                                : downvoteButton
+                                    ? {color: "rgba(255, 255, 255, 0.6"}
+                                    : {color: "rgba(255, 255, 255, 1)"}
+                        }>
+                        <FaChevronUp className="text-xl" />
+                        <h3 className="font-semibold">{formatNumber(upvote)}</h3>
                     </div>
-                    <div className="flex gap-1">
-                        <FaChevronDown className="text-white text-xl" />
-                        <h3 className="font-semibold">{formatNumber(thread?.downvote)}</h3>
+                    <div onClick={handleDownvoteButton} className="flex gap-1 hover:cursor-pointer" 
+                        style={upvoteButton 
+                                ? {color: "rgba(255, 255, 255, 0.6)"} 
+                                : downvoteButton
+                                    ? {color: "rgba(255, 255, 255, 1"}
+                                    : {color: "rgba(255, 255, 255, 1)"}
+                        }>
+                        <FaChevronDown className= "text-xl" />
+                        <h3 className="font-semibold">{formatNumber(downvote)}</h3>
                     </div>
                 </div>
                 <div className="flex items-center">
@@ -112,7 +246,10 @@ export default function Thread({thread}: {thread: thread}) {
             }
             {
                 replyButton 
-                    ? (<div className="w-full">{replies?.map(r => <Reply key={r?.id} reply={r} />)}</div>)
+                    ? (<div className="w-full">
+                        {newReplies?.length > 0 ? newReplies?.toReversed().map(r => <Reply key={r?.id} reply={r} moduleCode={thread?.module_title} />) : null}
+                        {replies?.map(r => <Reply key={r?.id} reply={r} moduleCode={thread?.module_title} />)}
+                        </div>)
                     : null
             }
         </div>

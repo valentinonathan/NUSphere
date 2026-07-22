@@ -5,6 +5,7 @@ import bannerDummy from "../../../../../public/moduledummy.jpg"
 import ModuleBox from "../ModuleBox";
 import Thread from "../Thread";
 import Link from "next/link";
+import JoinButton from "./JoinButton";
 
 export default function ModuleLayout({
   children
@@ -12,15 +13,16 @@ export default function ModuleLayout({
   children: React.ReactNode;
 }>) {
     const params = useParams();
-    const moduleCode = params.module;
+    const moduleCode = params.module as string;
     const category = params?.category;
 
     return (
         <div className="relative w-full h-max" style={{minHeight:"calc(100vh - 5.25rem)"}}>
             <div className="relative w-full h-50 rounded-t-md">
                 <img src={bannerDummy.src} className="w-full h-50 rounded-t-md object-cover" />
-                <div className="w-full flex gap-2 absolute bottom-0 left-0 p-2 pt-4 bg-gradient-to-t from-black/50 from-0% via-black/25 via-80% to-black/0 to-100%">
+                <div className="w-full flex gap-4 absolute bottom-0 left-0 p-2 pt-4 bg-gradient-to-t from-black/50 from-0% via-black/25 via-80% to-black/0 to-100%">
                     <h1 className="font-momo text-4xl">{moduleCode}{category === undefined ? "/General" : `/${category}`}</h1>
+                    <JoinButton moduleCode={moduleCode} />
                 </div>
             </div>
             <div className="relative flex min-w-full h-full" style={{minHeight:"calc(100vh - 18rem)"}}>
