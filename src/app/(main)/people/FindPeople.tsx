@@ -7,7 +7,7 @@ import { fetchBackendClient } from "@/utils/fetch-backend-client";
 import PeopleBadge from "./PeopleBadge";
 
 export default function FindPeople() {
-    type userData = {id: number, username: string, first_name: string, last_name: string, nationality: string, year: string, faculty: string, major: string, residence: string, bio: string, friends: number};
+    type userData = {id: number, username: string, first_name: string, last_name: string, nationality: string, year: string, faculty: string, major: string, residence: string, bio: string, friends: number, pfp_url: string};
     type usersData = {message: string, users: userData[], page: number, total: number};
 
     const options: string[] = ["Faculty", "Major", "Residence", "Year", "Nationality"];
@@ -154,7 +154,7 @@ export default function FindPeople() {
             <div className="flex flex-wrap gap-4 justify-center">
                 {usersResult?.length == undefined || usersResult?.length == 0 
                     ? null 
-                    : usersResult.map(u => <PeopleBadge key={u?.id} username={u?.username} first_name={u?.first_name} last_name={u?.last_name} year={u?.year} residence={u?.residence} nationality={u?.nationality} major={u?.major} />)
+                    : usersResult.map(u => <PeopleBadge imageUrl={u?.pfp_url} key={u?.id} username={u?.username} first_name={u?.first_name} last_name={u?.last_name} year={u?.year} residence={u?.residence} nationality={u?.nationality} major={u?.major} />)
                 }
                 {errorMessage}
             </div>

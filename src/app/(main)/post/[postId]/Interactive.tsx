@@ -14,11 +14,12 @@ type commentData = {
     user_id: number,
     content: string,
     first_name: string,
-    last_name: string
+    last_name: string,
+    pfp_url: string
 }
 
-export default function Interactive({likesCount, commentsCount, postId, hasLiked, firstName, lastName, caption, commentsData}: 
-    {likesCount: number, commentsCount: number, postId: number, hasLiked: boolean, firstName: string, lastName:string, caption: string, commentsData: commentData[]}) {
+export default function Interactive({imageUrl, likesCount, commentsCount, postId, hasLiked, firstName, lastName, caption, commentsData}: 
+    {imageUrl: string, likesCount: number, commentsCount: number, postId: number, hasLiked: boolean, firstName: string, lastName:string, caption: string, commentsData: commentData[]}) {
     const [likes, setLikes] = useState(likesCount);
     const [likeColor, setLikeColor] = useState(hasLiked ? "red" : "white");
     const [comments, setComments] = useState(commentsCount);
@@ -75,7 +76,7 @@ export default function Interactive({likesCount, commentsCount, postId, hasLiked
         if (postCommentData?.message != undefined && postCommentData.message == "Comment successfully posted") {
             const commentReturn: postComment = postCommentData?.comment;
             const commentState: commentData = {id: commentReturn?.id, post_id: commentReturn?.post_id, 
-                user_id: commentReturn?.user_id, content: commentReturn?.content, first_name: commentReturn?.first_name, last_name: commentReturn?.last_name};
+                user_id: commentReturn?.user_id, content: commentReturn?.content, first_name: commentReturn?.first_name, last_name: commentReturn?.last_name, pfp_url: imageUrl};
 
             if (textAreaRef?.current?.value != undefined) {
                 textAreaRef.current.value = "";
@@ -91,7 +92,7 @@ export default function Interactive({likesCount, commentsCount, postId, hasLiked
             {
                 caption != null 
                     ? <div className="flex min-w-full w-full items-center pb-2">
-                        <AvatarWithOnline size="2" />
+                        <AvatarWithOnline imageUrl={imageUrl} size="2" />
                         <div className="px-2 max-w-full">
                             <h3 className="font-semibold inline">{firstName} {lastName}</h3>
                             <p className="inline">&nbsp;&nbsp;</p>
@@ -103,7 +104,7 @@ export default function Interactive({likesCount, commentsCount, postId, hasLiked
 
             {commentsDataState?.map(c => 
                     <div key={c?.id} className="flex min-w-full w-full items-center pb-2">
-                        <AvatarWithOnline size="2" />
+                        <AvatarWithOnline imageUrl={c?.pfp_url} size="2" />
                         <div className="px-2 max-w-full">
                             <h3 className="font-semibold inline">{c?.first_name} {c?.last_name}</h3>
                             <p className="inline">&nbsp;&nbsp;</p>

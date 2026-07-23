@@ -28,7 +28,8 @@ type thread = {
     last_name: string,
     module_title: string,
     has_upvoted: boolean,
-    has_downvoted: boolean
+    has_downvoted: boolean,
+    pfp_url: string
 }
 
 export default function Thread({thread}: {thread: thread}) {
@@ -47,7 +48,8 @@ export default function Thread({thread}: {thread: thread}) {
         last_name: string,
         replies: reply[],
         has_upvoted: boolean,
-        has_downvoted: boolean
+        has_downvoted: boolean,
+        pfp_url: string
     }
 
     const [replyButton, setReplyButton] = useState(false);
@@ -74,6 +76,7 @@ export default function Thread({thread}: {thread: thread}) {
         const result = await fetchBackendClient<result>(`/modules/${thread?.module_title}/threads/${thread?.id}/replies`, "POST", {parentReplyId: -1, reply: replyBody});
         
         if (result?.message == "Post thread reply successful") {
+            result.reply.pfp_url = thread?.pfp_url;
             newReplies.push(result.reply);
             setIsTextbox(false);
             if (!replyButton) {
@@ -184,7 +187,7 @@ export default function Thread({thread}: {thread: thread}) {
             <div className="w-200 h-auto flex flex-col gap-2">
                 <Link href={`/${thread?.username}`}>
                     <div className="flex gap-2">
-                        <AvatarWithOnline size="2" />
+                        <AvatarWithOnline imageUrl={thread?.pfp_url} size="2" />
                         <h3 className="w-full flex items-center font-semibold">{thread?.first_name} {thread?.last_name}</h3>
                     </div>
                 </Link>

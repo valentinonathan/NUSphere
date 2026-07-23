@@ -25,7 +25,8 @@ type reply = {
     last_name: string,
     replies: reply[],
     has_upvoted: boolean,
-    has_downvoted: boolean
+    has_downvoted: boolean,
+    pfp_url: string
 }
 
 export default function Reply({reply, moduleCode}: {reply: reply, moduleCode: string}) {    
@@ -44,6 +45,7 @@ export default function Reply({reply, moduleCode}: {reply: reply, moduleCode: st
         const result = await fetchBackendClient<result>(`/modules/${moduleCode}/threads/${reply?.thread_id}/replies`, "POST", {parentReplyId: Number(reply?.id), reply: replyBody});
         
         if (result?.message == "Post thread reply successful") {
+            result.reply.pfp_url = reply?.pfp_url;
             newReplies.push(result.reply);
             console.log(result.reply);
             setIsTextbox(false);
@@ -151,7 +153,7 @@ export default function Reply({reply, moduleCode}: {reply: reply, moduleCode: st
         <div className="flex w-full h-auto gap-2">
             <div className="w-max h-auto flex flex-col">
                 <Link href={`/${reply?.username}`}>
-                    <AvatarWithOnline size="2" />
+                    <AvatarWithOnline imageUrl={reply?.pfp_url} size="2" />
                 </Link>
                 <div className="relative flex-1 w-full">
                     <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 bg-white" style={{width:"1px"}}/>

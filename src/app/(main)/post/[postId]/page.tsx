@@ -24,7 +24,8 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
         username: string,
         first_name: string,
         last_name: string,
-        message: string
+        message: string,
+        pfp_url: string
     }
     const post = await fetchBackendServer<post>(`/posts/${postId}`, "GET");
 
@@ -38,7 +39,8 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
         user_id: number,
         content: string,
         first_name: string,
-        last_name: string
+        last_name: string,
+        pfp_url: string
     }
     type commentData = {
         comments: comment[],
@@ -68,13 +70,13 @@ export default async function PostPage({params}: {params: Promise<{ postId: stri
                 <div className="flex-1 min-h-full flex flex-col justify-between">
                     <div className="flex gap-2 items-center px-2 min-h-15 max-h-15 min-w-full rounded-tr-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
                         <Link href={`/${post?.username}`}>
-                        <AvatarWithOnline size="2.5"/>
+                        <AvatarWithOnline imageUrl={post?.pfp_url} size="2.5"/>
                         </Link>
                         <Link href={`/${post?.username}`}>
                         <h1>{post?.first_name} {post?.last_name}</h1>
                         </Link>
                     </div>
-                    <Interactive likesCount={likesCount} commentsCount={commentsCount} postId={Number(postId)} hasLiked={hasLiked} firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} commentsData={commentData?.comments}/>
+                    <Interactive imageUrl={post?.pfp_url} likesCount={likesCount} commentsCount={commentsCount} postId={Number(postId)} hasLiked={hasLiked} firstName={post?.first_name} lastName={post?.last_name} caption={post?.caption} commentsData={commentData?.comments}/>
                 </div>
             </div>
         </div>

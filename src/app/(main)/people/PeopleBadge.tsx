@@ -5,12 +5,12 @@ import { MdOutlineHomeWork } from "react-icons/md";
 import { IoGlobeOutline } from "react-icons/io5";
 import Link from "next/link";
 
-export default function PeopleBadge({username, first_name, last_name, year, residence, nationality, major}: {username: string, first_name: string, last_name: string, year: string, residence: string, nationality: string, major: string}) {
+export default function PeopleBadge({imageUrl, username, first_name, last_name, year, residence, nationality, major}: {imageUrl: string, username: string, first_name: string, last_name: string, year: string, residence: string, nationality: string, major: string}) {
     return (
         <div className="min-w-80 min-h-32 flex gap-4 p-5 shadow-black/10 shadow-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% rounded-md">
             <Link href={`/${username}`}>
             <div className="pt-2"> 
-                <AvatarWithOnline size="6"/>
+                <AvatarWithOnline imageUrl={imageUrl} size="6"/>
             </div>
             </Link>
             <div className="flex flex-col gap-1">
