@@ -3,7 +3,6 @@
 import AvatarWithOnline from "@/components/avatarWithOnline";
 import postDummy from "../../../../public/post-dummy.png"
 import { FaChevronUp, FaChevronDown } from "react-icons/fa";
-import ReplyTest from "./ReplyTest";
 import { formatNumber } from "@/utils/valueConverter";
 import Link from "next/link";
 import { useRef, useState } from "react";

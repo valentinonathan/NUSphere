@@ -17,7 +17,6 @@ export default async function Navbar() {
         pfpUrl: string
       }
       const data: data = await fetchBackendServer<data>("", "GET");
-      console.log(data.pfpUrl);
       
     return (
         <header className="sticky top-0 z-100 p-5 min-h-17 h-17 max-h-17 flex justify-between items-center shadow-black/10 shadow-md bg-gradient-to-r from-primary/60 from-0% via-secondary/40 via-110% to-secondary/40 to-100% backdrop-blur-md">

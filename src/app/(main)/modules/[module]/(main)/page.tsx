@@ -23,7 +23,8 @@ export default function ModuleGeneral() {
         last_name: string,
         module_title: string,
         has_upvoted: boolean,
-        has_downvoted: boolean
+        has_downvoted: boolean,
+        pfp_url: string
     }
     type threads = {message: string, newThread: thread, 0: thread[], 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
     

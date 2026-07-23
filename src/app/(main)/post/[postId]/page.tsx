@@ -5,7 +5,6 @@ import { IoChatbubble } from "react-icons/io5";
 import { FaHeart } from "react-icons/fa";
 import { IoSend } from "react-icons/io5";
 import GroupAvatar from "@/components/groupAvatar";
-import Comment from "./Comment";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
 import { formatNumber } from "@/utils/valueConverter";
