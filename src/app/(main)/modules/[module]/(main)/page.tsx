@@ -1,6 +1,6 @@
 "use client";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
-import Thread from "../Thread";
+import Thread from "../../Thread";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -25,7 +25,7 @@ export default function ModuleGeneral() {
         has_upvoted: boolean,
         has_downvoted: boolean
     }
-    type threads = {message: string, 0: thread[], 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
+    type threads = {message: string, newThread: thread, 0: thread[], 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
     
     const params = useParams();
     const moduleCode = params.module;
@@ -34,6 +34,7 @@ export default function ModuleGeneral() {
     useEffect(() => {
         async function fetchThreads() {
             const fetchResult = await fetchBackendClient<threads>(`/modules/${moduleCode}/threads`, "GET");
+            console.log("Test");
             if (fetchResult?.message !== undefined && fetchResult.message == "Request module threads successful") {
                 setThreads(fetchResult);
             }
@@ -43,9 +44,10 @@ export default function ModuleGeneral() {
     }, [moduleCode]);
     return (
         <div className="py-4 flex flex-col gap-8 items-center bg-black/15 rounded-bl-md" style={{width:"calc(100% - 13.75rem)"}}>
+            {threads?.newThread !== undefined && threads.newThread != null ? <Thread thread={threads?.newThread} key={threads?.newThread?.id} /> : null}
             {   
                 
-                weeks.map(w => 
+                weeks?.toReversed()?.map(w => 
                         // @ts-ignore
                     threads?.[w]?.length > 0
                         ? (

@@ -100,12 +100,12 @@ const page = () => {
           onChange={(e) => setSearch(e.target.value)}
           className="p-2 rounded-md w-full max-w-md bg-black/20 shadow-black/20 shadow-md"
         />
-        <Link
+        {/* <Link
           href="/events/create"
           className="inline-flex items-center justify-center rounded-md bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600"
         >
           Create Event
-        </Link>
+        </Link> */}
       </div>
 
       <div className="flex flex-col gap-4 flex-1">

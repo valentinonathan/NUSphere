@@ -162,34 +162,40 @@ export default function Reply({reply, moduleCode}: {reply: reply, moduleCode: st
                 <Link href={`/${reply?.username}`}>
                     <h3 className="w-full flex items-center" style={{height:"2rem"}}>{reply?.first_name} {reply?.last_name}</h3>
                 </Link>
-                <div className="flex flex-col gap-2"> 
+                <div className="flex flex-col gap-1"> 
                     <p className="">{reply?.body}</p>
-                    <div className="flex w-max py-1.5 px-2 border-1 border-white/40 rounded-full text-[80%] gap-2" 
-                        style={upvoteButton 
-                                ? {background: "linear-gradient(to right, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
-                                : downvoteButton
-                                    ? {background: "linear-gradient(to left, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
-                                    : {background: "rgba(0, 0, 0, 0.2)"}
-                    }>
-                        <div onClick={handleUpvoteButton} className="flex gap-1 hover:cursor-pointer"
+                    <div className="flex gap-3 h-8">
+                        <div className="flex w-max py-1.5 px-2 border-1 border-white/40 rounded-full text-[80%] gap-2" 
                             style={upvoteButton 
-                                    ? {color: "rgba(255, 255, 255, 1)"} 
+                                    ? {background: "linear-gradient(to right, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
                                     : downvoteButton
-                                        ? {color: "rgba(255, 255, 255, 0.6"}
-                                        : {color: "rgba(255, 255, 255, 1)"}
-                            }>
-                            <FaChevronUp className="text-xl" />
-                            <h3 className="font-semibold">{formatNumber(upvote)}</h3>
+                                        ? {background: "linear-gradient(to left, rgba(140, 82, 255, 0.5) 30%, rgba(255, 87, 87, 0.2) 100%)"}
+                                        : {background: "rgba(0, 0, 0, 0.2)"}
+                        }>
+                            <div onClick={handleUpvoteButton} className="flex gap-1 hover:cursor-pointer"
+                                style={upvoteButton 
+                                        ? {color: "rgba(255, 255, 255, 1)"} 
+                                        : downvoteButton
+                                            ? {color: "rgba(255, 255, 255, 0.6"}
+                                            : {color: "rgba(255, 255, 255, 1)"}
+                                }>
+                                <FaChevronUp className="text-xl" />
+                                <h3 className="font-semibold">{formatNumber(upvote)}</h3>
+                            </div>
+                            <div onClick={handleDownvoteButton} className="flex gap-1 hover:cursor-pointer" 
+                                style={upvoteButton 
+                                        ? {color: "rgba(255, 255, 255, 0.6)"} 
+                                        : downvoteButton
+                                            ? {color: "rgba(255, 255, 255, 1"}
+                                            : {color: "rgba(255, 255, 255, 1)"}
+                                }>
+                                <FaChevronDown className= "text-xl" />
+                                <h3 className="font-semibold">{formatNumber(downvote)}</h3>
+                            </div>
                         </div>
-                        <div onClick={handleDownvoteButton} className="flex gap-1 hover:cursor-pointer" 
-                            style={upvoteButton 
-                                    ? {color: "rgba(255, 255, 255, 0.6)"} 
-                                    : downvoteButton
-                                        ? {color: "rgba(255, 255, 255, 1"}
-                                        : {color: "rgba(255, 255, 255, 1)"}
-                            }>
-                            <FaChevronDown className= "text-xl" />
-                            <h3 className="font-semibold">{formatNumber(downvote)}</h3>
+                        <div onClick={handleTextbox} className="hover:cursor-pointer flex items-center jusitfy-center w-max h-full py-1.5 px-2 bg-black/20 rounded-full text-[80%] gap-1.5">
+                            <BiComment className="text-lg" />
+                            <h3 className="font-semibold">{isTextbox ? "Send" : "Reply"}</h3>
                         </div>
                     </div>
                     <div className="min-h-1" />

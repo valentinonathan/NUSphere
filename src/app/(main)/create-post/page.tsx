@@ -37,8 +37,8 @@ export default function CreatePostPage() {
     }
 
     // Validate file size (5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError("File is too large (max 5MB)");
+    if (file.size > 10 * 1024 * 1024) {
+      setError("File is too large (max 10MB)");
       return;
     }
 
@@ -182,7 +182,7 @@ export default function CreatePostPage() {
               <div className="text-center">
                 <p className="text-white font-semibold mb-2 text-lg">Select an image</p>
                 <p className="text-white/60 text-sm mb-1">JPEG, PNG, WebP, or GIF</p>
-                <p className="text-white/60 text-sm">Max 5MB</p>
+                <p className="text-white/60 text-sm">Max 10MB</p>
               </div>
               <input
                 type="file"

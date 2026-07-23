@@ -1,9 +1,9 @@
 "use client"
 
 import { useParams } from "next/navigation";
-import bannerDummy from "../../../../../public/moduledummy.jpg"
-import ModuleBox from "../ModuleBox";
-import Thread from "../Thread";
+import bannerDummy from "../../../../../../public/moduledummy.jpg"
+import ModuleBox from "../../ModuleBox";
+import Thread from "../../Thread";
 import Link from "next/link";
 import JoinButton from "./JoinButton";
 

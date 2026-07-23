@@ -6,6 +6,7 @@ import logo from "../../../public/NUSPHERE Logo.png";
 import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import Link from "next/link";
 import { IoAdd } from "react-icons/io5";
+import CreateButton from "./CreateButton";
 
 export default async function Navbar() {
       type data = {
@@ -15,6 +16,7 @@ export default async function Navbar() {
         userId: number
       }
       const data: data = await fetchBackendServer<data>("", "GET");
+      
     return (
         <header className="sticky top-0 z-100 p-5 min-h-17 h-17 max-h-17 flex justify-between items-center shadow-black/10 shadow-md bg-gradient-to-r from-primary/60 from-0% via-secondary/40 via-110% to-secondary/40 to-100% backdrop-blur-md">
             <div className="h-12 flex gap-3 items-center">
@@ -29,12 +31,7 @@ export default async function Navbar() {
                     data?.loggedIn != undefined && data?.loggedIn
                         ? (
                             <>
-                            <Link href="/create-post">
-                                <div className="bg-pink-500 rounded-md flex justify-center text-white p-1.5 pr-2 gap-2 hover:cursor-pointer">
-                                    <IoAdd className="text-2xl bg-white/27 rounded-sm"/>
-                                    Create Post
-                                </div>
-                            </Link>
+                            <CreateButton />
                             <NotificationTab userId={data?.userId || 0} loggedIn={data?.loggedIn || false} />
                             </>
                         )

@@ -189,9 +189,15 @@ export default function Thread({thread}: {thread: thread}) {
                     </div>
                 </Link>
                 <h2 className="text-2xl font-semibold">{thread?.title}</h2>
-                <div className="w-192 h-108">
-                    <img src={postDummy.src} className="w-full h-full object-cover rounded-md" />
-                </div>
+                {
+                    thread?.image_url != undefined && thread.image_url != null
+                        ? (
+                            <div className="w-192 h-108">
+                                <img src={thread?.image_url} className="w-full h-full object-cover rounded-md" />
+                            </div>
+                        )
+                        : null
+                }
                 <p className="">{thread?.body}</p>
             </div>
             <div className="flex gap-3 h-8">

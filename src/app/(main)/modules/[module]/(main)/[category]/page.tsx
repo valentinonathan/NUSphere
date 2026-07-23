@@ -1,7 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import Thread from "../../Thread"
+import Thread from "../../../Thread"
 import { useEffect, useState } from "react";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
 
@@ -26,7 +26,7 @@ export default function ModuleCategory() {
         has_upvoted: boolean,
         has_downvoted: boolean
     }
-    type threads = {0: thread[], 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
+    type threads = {0: thread[], newThread: thread, 1: thread[], 2: thread[], 3: thread[], 4: thread[], 5: thread[], 6: thread[], 7: thread[], 8: thread[], 9: thread[], 10: thread[], 11: thread[], 12: thread[], 13: thread[]}
     
     const params = useParams();
     const moduleCode = params.module;
@@ -46,6 +46,7 @@ export default function ModuleCategory() {
     if (params.category == "Lecture" || params.category == "Tutorial" || params.category == "Assignment" || params.category == "Exam") {
         return (
             <div className="py-4 flex flex-col gap-8 items-center bg-black/15 rounded-bl-md" style={{width:"calc(100% - 13.75rem)"}}>
+                {threads?.newThread != null ? <Thread thread={threads?.newThread} key={threads?.newThread?.id} /> : null}
                 {   
                    
                     weeks.map(w => 
@@ -57,7 +58,7 @@ export default function ModuleCategory() {
                                     <div className="flex flex-col gap-4">
                                         {
                                             // @ts-ignore
-                                            threads?.[w]?.map(t => <Thread thread={t} key={t?.id} />)
+                                            threads?.[w]?.toReversed()?.map(t => <Thread thread={t} key={t?.id} />)
                                         }
                                     </div>
                                 </div>
