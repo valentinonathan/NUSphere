@@ -206,11 +206,11 @@ export default function CreateThread() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Title of your thread..."
-                    maxLength={500}
+                    maxLength={300}
                     className="w-150 h-20 px-4 py-3 bg-white/10 border border-white/20 rounded-md text-white placeholder-white/50 focus:outline-none focus:border-white/50 resize-none"
                     />
                     <div className="text-white/60 text-sm text-right">
-                    {caption.length} / 500
+                    {caption.length} / 300
                     </div>
                 </div>
                 {!imagePreview ? (
@@ -293,11 +293,11 @@ export default function CreateThread() {
                     value={caption}
                     onChange={(e) => setCaption(e.target.value)}
                     placeholder="Write the body of your thread..."
-                    maxLength={500}
+                    maxLength={40000}
                     className="w-150 h-20 px-4 py-3 bg-white/10 border border-white/20 rounded-md text-white placeholder-white/50 focus:outline-none focus:border-white/50 resize-none"
                     />
                     <div className="text-white/60 text-sm text-right">
-                    {caption.length} / 500
+                    {caption.length} / 40000
                     </div>
                 </div>
 

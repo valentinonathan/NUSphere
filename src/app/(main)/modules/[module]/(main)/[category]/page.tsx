@@ -50,7 +50,7 @@ export default function ModuleCategory() {
                 {threads?.newThread != null ? <Thread thread={threads?.newThread} key={threads?.newThread?.id} /> : null}
                 {   
                    
-                    weeks.map(w => 
+                    weeks?.toReversed()?.map(w => 
                          // @ts-ignore
                         threads?.[w]?.length > 0
                             ? (

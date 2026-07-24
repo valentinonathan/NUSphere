@@ -184,7 +184,7 @@ export default function Thread({thread}: {thread: thread}) {
 
     return (
         <div className="w-200 h-auto p-4 flex flex-col gap-2 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
-            <div className="w-200 h-auto flex flex-col gap-2">
+            <div className="w-full h-auto flex flex-col gap-2">
                 <Link href={`/${thread?.username}`}>
                     <div className="flex gap-2">
                         <AvatarWithOnline imageUrl={thread?.pfp_url} size="2" />
@@ -201,7 +201,7 @@ export default function Thread({thread}: {thread: thread}) {
                         )
                         : null
                 }
-                <p className="">{thread?.body}</p>
+                <p className="w-full break-words whitespace-pre-wrap">{thread?.body}</p>
             </div>
             <div className="flex gap-3 h-8">
                 <div className="flex w-max py-1.5 px-2 border-1 border-white/40 rounded-full text-[80%] gap-2" 

@@ -6,20 +6,35 @@ import ModuleBox from "../../ModuleBox";
 import Thread from "../../Thread";
 import Link from "next/link";
 import JoinButton from "./JoinButton";
+import { useEffect, useState } from "react";
+import { fetchBackendClient } from "@/utils/fetch-backend-client";
 
 export default function ModuleLayout({
   children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    type moduleData = {
+        id: number, title: string, atendees: number, banner_url: string
+    };
     const params = useParams();
     const moduleCode = params.module as string;
     const category = params?.category;
+    const [moduleData, setModuleData] = useState<moduleData>();
+    
+    useEffect(() => {
+        async function getModule() {
+            const result = await fetchBackendClient<moduleData>(`/modules/${moduleCode}`, "GET");
+            setModuleData(result);
+            console.log(result);
+        }
+        getModule();
+    }, [moduleCode]);
 
     return (
         <div className="relative w-full h-max" style={{minHeight:"calc(100vh - 5.25rem)"}}>
             <div className="relative w-full h-50 rounded-t-md">
-                <img src={bannerDummy.src} className="w-full h-50 rounded-t-md object-cover" />
+                <img src={moduleData?.banner_url} className="w-full h-50 rounded-t-md object-cover" />
                 <div className="w-full flex gap-4 absolute bottom-0 left-0 p-2 pt-4 bg-gradient-to-t from-black/50 from-0% via-black/25 via-80% to-black/0 to-100%">
                     <h1 className="font-momo text-4xl">{moduleCode}{category === undefined ? "/General" : `/${category}`}</h1>
                     <JoinButton moduleCode={moduleCode} />
