@@ -13,6 +13,7 @@ import { fetchBackendServer } from "@/utils/fetch-backend-server";
 import postDummy from "../../../../../public/post-dummy.png";
 import PostInteractive from "./PostInteractive";
 import Link from "next/link";
+import AvatarWithOnline from "@/components/avatarWithOnline";
 
 export default async function Post({postId}: {postId: string}) {
     type post = {
@@ -25,7 +26,8 @@ export default async function Post({postId}: {postId: string}) {
         username: string,
         first_name: string,
         last_name: string,
-        message: string
+        message: string,
+        pfp_url: string
     }
     const post = await fetchBackendServer<post>(`/posts/${postId}`, "GET");
 
@@ -51,9 +53,7 @@ export default async function Post({postId}: {postId: string}) {
         <div className="flex flex-col gap-2 min-w-110 w-110 max-w-110 max-h-500 px-3 pt-3 pb-5 shadow-black/10 shadow-md rounded-md bg-gradient-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
             <div className="flex gap-2 items-center">
                 <Link href={`/${post.username}`}>
-                <Avatar className="h-9.5 w-auto">
-                    <AvatarImage src={profile.src} className=""/>
-                </Avatar>
+                <AvatarWithOnline size="2.25" imageUrl={post?.pfp_url} />
                 </Link>
                 <Link href={`/${post.username}`}>
                 <h2 className="font-semibold">

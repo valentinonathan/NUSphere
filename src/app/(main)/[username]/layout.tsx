@@ -28,7 +28,8 @@ export default async function ProfileLayout({
       residence: string,
       bio: string,
       message: string,
-      friends: number
+      friends: number,
+      pfpUrl: string
     }
     type posts = {
       id: number,
@@ -59,7 +60,7 @@ export default async function ProfileLayout({
 
           <div className="flex gap-10 min-h-max max-w-180">
             <div className="min-h-full min-w-max flex flex-col justify-between">
-              <AvatarWithOnline size="8"/>
+              <AvatarWithOnline imageUrl={userDetails?.pfpUrl} size="8"/>
               <p>
                 <span className="font-semibold">{userDetails.friends}</span> friends <br />
                 <span className="font-semibold">{postData.count}</span> posts
