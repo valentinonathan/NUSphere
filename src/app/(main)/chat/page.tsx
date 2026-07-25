@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import socket from "@/lib/socket";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
+import { ApiResponse } from "../market/page";
 
 type ErrorMessage = {
     message: string;
@@ -23,6 +24,11 @@ type Message = {
     is_system_message?: boolean;
 };
 
+type MarketConversation = {
+    conversation_id: number
+    listing_id: number
+}
+
 export default function ChatPage() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [receiver, setReceiver] = useState("");
@@ -35,6 +41,13 @@ export default function ChatPage() {
     const [reservationStatus, setReservationStatus] = useState<"idle" | "requested" | "reserved" | "expired" | "sold">("idle");
     const [reservationExpiresAt, setReservationExpiresAt] = useState<string | null>(null);
     const [hasAutoStarted, setHasAutoStarted] = useState(false);
+
+    const bottomRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
+    }, [messages]);
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -139,7 +152,7 @@ export default function ChatPage() {
                 });
             }
 
-            
+
             const tokenResponse = await fetch("/api/socket-token");
             const tokenData: { token: string } = await tokenResponse.json();
 
@@ -173,6 +186,10 @@ export default function ChatPage() {
 
     const sendMessage = () => {
         try {
+            if (hasAutoStarted) {
+                void createMessageConversation();
+            }
+
             if (!conversationId) {
                 throw new Error("You have not started a conversation");
             }
@@ -189,79 +206,106 @@ export default function ChatPage() {
         }
     };
 
-    const requestReservation = () => {
-        if (!conversationId || !listingId) {
-            setErrorMessage("Start a conversation for a listing before requesting a reservation.");
-            return;
-        }
-
-        socket.emit("chat:message", {
-            conversationId,
-            text: "Buyer requested reservation for this item.",
-        });
-        setReservationStatus("requested");
-        setText("");
-    };
-
-    const reserveItem = async () => {
-        if (!conversationId || !listingId) {
-            setErrorMessage("No listing is attached to this conversation.");
-            return;
-        }
-
+    const createMessageConversation = async () => {
         try {
-            const response = await fetch(`/api/market/${listingId}/reserve`, {
-                method: "POST",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ conversationId, receiverUsername: receiver }),
-            });
-            const payload = await response.json() as { message?: string; data?: { expires_at?: string } };
+            const res = await fetchBackendClient<ApiResponse<MarketConversation>>(
+                "/market/conversation",
+                "POST",
+                {
+                    conversationId,
+                    listingId
+                }
+            );
 
-            const expiresAt = payload?.data?.expires_at ?? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-            const message = `Item reserved until ${expiresAt}.`;
+            if ("message" in res) {
+                if (res.message == "Market conversation already exists") {
+                    return 
+                } else {
+                    throw new Error(res.message);
+                }
+            } 
+            setHasAutoStarted(false)
 
-            socket.emit("chat:message", {
-                conversationId,
-                text: message,
-                isSystemMessage: true,
-            });
-            setReservationStatus("reserved");
-            setReservationExpiresAt(expiresAt);
-            setErrorMessage("");
-
-            const timeout = new Date(expiresAt).getTime() - Date.now();
-            if (timeout > 0) {
-                window.setTimeout(() => {
-                    socket.emit("chat:message", {
-                        conversationId,
-                        text: "Reservation expired.",
-                        isSystemMessage: true,
-                    });
-                    setReservationStatus("expired");
-                    setReservationExpiresAt(null);
-                }, timeout);
-            }
         } catch (error) {
-            setErrorMessage(error instanceof Error ? error.message : "Failed to create reservation");
+            setErrorMessage(error instanceof Error ? error.message : "Faied to create marketConversation")
         }
-    };
+               
+    }
 
-    const confirmPayment = () => {
-        if (!conversationId) {
-            setErrorMessage("Start a conversation before confirming payment.");
-            return;
-        }
+    // const requestReservation = () => {
+    //     if (!conversationId || !listingId) {
+    //         setErrorMessage("Start a conversation for a listing before requesting a reservation.");
+    //         return;
+    //     }
 
-        socket.emit("chat:message", {
-            conversationId,
-            text: "Seller confirmed payment. Listing marked as Sold.",
-            isSystemMessage: true,
-        });
-        setReservationStatus("sold");
-    };
+    //     socket.emit("chat:message", {
+    //         conversationId,
+    //         text: "Buyer requested reservation for this item.",
+    //     });
+    //     setReservationStatus("requested");
+    //     setText("");
+    // };
+
+    // const reserveItem = async () => {
+    //     if (!conversationId || !listingId) {
+    //         setErrorMessage("No listing is attached to this conversation.");
+    //         return;
+    //     }
+
+    //     try {
+    //         const response = await fetch(`/api/market/${listingId}/reserve`, {
+    //             method: "POST",
+    //             credentials: "include",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //             },
+    //             body: JSON.stringify({ conversationId, receiverUsername: receiver }),
+    //         });
+    //         const payload = await response.json() as { message?: string; data?: { expires_at?: string } };
+
+    //         const expiresAt = payload?.data?.expires_at ?? new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+    //         const message = `Item reserved until ${expiresAt}.`;
+
+    //         socket.emit("chat:message", {
+    //             conversationId,
+    //             text: message,
+    //             isSystemMessage: true,
+    //         });
+
+    //         setReservationStatus("reserved");
+    //         setReservationExpiresAt(expiresAt);
+    //         setErrorMessage("");
+
+    //         const timeout = new Date(expiresAt).getTime() - Date.now();
+    //         if (timeout > 0) {
+    //             window.setTimeout(() => {
+    //                 socket.emit("chat:message", {
+    //                     conversationId,
+    //                     text: "Reservation expired.",
+    //                     isSystemMessage: true,
+    //                 });
+    //                 setReservationStatus("expired");
+    //                 setReservationExpiresAt(null);
+    //             }, timeout);
+    //         }
+    //     } catch (error) {
+    //         setErrorMessage(error instanceof Error ? error.message : "Failed to create reservation");
+    //     }
+    // };
+
+    // const confirmPayment = () => {
+    //     if (!conversationId) {
+    //         setErrorMessage("Start a conversation before confirming payment.");
+    //         return;
+    //     }
+
+    //     socket.emit("chat:message", {
+    //         conversationId,
+    //         text: "Seller confirmed payment. Listing marked as Sold.",
+    //         isSystemMessage: true,
+    //     });
+    //     setReservationStatus("sold");
+    // };
 
     const isSeller = myUserId !== null && sellerId !== null && myUserId === sellerId;
 
@@ -282,7 +326,7 @@ export default function ChatPage() {
                     <button className="flex-1" onClick={startConversation}>Start</button>
                 </div>
 
-                {conversationId && listingId && !isSeller && reservationStatus === "idle" && (
+                {/* {conversationId && listingId && !isSeller && reservationStatus === "idle" && (
                     <button className="mt-3 rounded-md bg-black/10 px-3 py-2 text-sm text-white" onClick={requestReservation}>
                         Request Reservation
                     </button>
@@ -304,7 +348,7 @@ export default function ChatPage() {
                     <p className="mt-3 text-sm text-white/80">
                         Reservation expires {new Date(reservationExpiresAt).toLocaleString()}
                     </p>
-                )}
+                )} */}
             </div>
 
             <div className="flex flex-1 flex-col h-full ">
@@ -316,10 +360,10 @@ export default function ChatPage() {
                         return (
                             <div
                                 className={`w-fit max-w-[80%] rounded-md p-2 shadow-black/10 shadow-md ${isSystemMessage
-                                        ? "self-center bg-black/10 text-sm italic text-white/80"
-                                        : isMine
-                                            ? "self-end bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%"
-                                            : "self-start bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%"
+                                    ? "self-center bg-black/10 text-sm italic text-white/80"
+                                    : isMine
+                                        ? "self-end bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%"
+                                        : "self-start bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%"
                                     }`}
                                 key={msg.id || msg.created_at}
                             >
@@ -327,6 +371,7 @@ export default function ChatPage() {
                             </div>
                         );
                     })}
+                    <div ref={bottomRef} />
                 </div>
                 <div className="flex flex-row w-full">
                     <input

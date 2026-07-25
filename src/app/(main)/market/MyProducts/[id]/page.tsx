@@ -4,7 +4,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
-import type { ApiResponse, Listing } from "../page";
+import type { ApiResponse, Listing } from "../../page";
+
+export type MarketConversation = {
+  conversation_id: number;
+  buyer_id: number;
+  buyer_username: string;
+};
 
 export default function Page() {
   const params = useParams();
@@ -12,6 +18,7 @@ export default function Page() {
   const productId = Array.isArray(rawId) ? rawId[0] : rawId;
 
   const [product, setProduct] = useState<Listing | null>(null);
+  const [marketConversations, setMarketConversations] = useState<MarketConversation[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
@@ -43,7 +50,26 @@ export default function Page() {
       }
     }
 
+    async function loadConversations() {
+      try {
+        const response =
+          await fetchBackendClient<ApiResponse<MarketConversation[]>>(
+            `/market/${productId}/conversations`,
+            "GET"
+          );
+
+        if (response.message) {
+          throw new Error(response.message);
+        }
+
+        setMarketConversations(response.data ?? []);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     loadProduct();
+    loadConversations();
   }, [productId]);
 
   if (loading) {
@@ -102,7 +128,7 @@ export default function Page() {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
           <Link
-            href="/market"
+            href="/market/MyProducts"
             className="inline-flex items-center gap-2 text-sm text-white/80 transition hover:text-white"
           >
             ← Back to listings
@@ -183,6 +209,43 @@ export default function Page() {
                 Contact Seller
               </Link>
             </div>
+          </section>
+          <section className="rounded-md shadow-md shadow-black/10 bg-linear-to-r from-primary/50 via-secondary/50 to-secondary/50 p-6">
+            <h2 className="mb-4 text-2xl font-semibold text-white">
+              Interested Buyers
+            </h2>
+
+            {marketConversations.length === 0 ? (
+              <p className="text-white/70">
+                No buyers have contacted you yet.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {marketConversations.map((conversation) => (
+                  <div
+                    key={conversation.conversation_id}
+                    className="flex items-center justify-between rounded-md bg-black/20 p-4"
+                  >
+                    <div>
+                      <p className="font-semibold text-white">
+                        {conversation.buyer_username}
+                      </p>
+
+                      <p className="text-sm text-white/70">
+                        Buyer ID: {conversation.buyer_id}
+                      </p>
+                    </div>
+
+                    <Link
+                      href={`/chat?conversationId=${conversation.conversation_id}`}
+                      className="rounded-md bg-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/30"
+                    >
+                      Open Chat
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
       </div>

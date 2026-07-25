@@ -1,32 +1,9 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
 import ProductCard from "./ProductCard"
+import { ProductCardType, ApiResponse, Listing } from "../page"
+import { useEffect, useMemo, useState } from "react"
 import { fetchBackendClient } from "@/utils/fetch-backend-client"
-import Link from "next/link"
-
-export type Listing = {
-  id: number
-  seller_id: number
-  title: string
-  description: string
-  price: number
-  image_url: string
-  created_at: string
-  seller_username: string
-  category_id: number
-  category_name: string
-}
-
-export type ApiResponse<T> = {
-  message?: string
-  data?: T
-}
-
-export type ProductCardType = Pick<
-  Listing,
-  "id" | "image_url" | "title" | "seller_username" | "price" | "category_name"
->
 
 const Page = () => {
   const [productCards, setProductCards] = useState<ProductCardType[]>([])
@@ -39,7 +16,7 @@ const Page = () => {
       try {
         setLoading(true)
         const response = await fetchBackendClient<ApiResponse<ProductCardType[]>>(
-          "/market",
+          "/market/my-listings",
           "GET"
         )
 

@@ -13,7 +13,7 @@ interface Area {
   height: number;
 }
 
-import { ApiResponse } from "../page";
+import { ApiResponse } from "../../page";
 
 type Category = {
   id: number;
@@ -164,7 +164,7 @@ export default function ListingImageUpload() {
         throw new Error(data.message || "Failed to create listing");
       }
 
-      router.push("/marketplace");
+      router.push("/market");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
