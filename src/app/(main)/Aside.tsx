@@ -46,12 +46,14 @@ export default function Aside() {
                 </div>
                 </Link>
 
+                <Link href="/market">
                 <div className="flex items-center gap-5 justify-around hover:cursor-pointer text-white hover:text-white/60">
                     <div className="min-w-8 min-h-8 flex justify-center items-center">
                         <FaStore className="text-[168%]" />
                     </div>
                     <h1 className="">Market</h1>
                 </div>
+                </Link>
 
                 <div className="flex items-center gap-5 justify-around hover:cursor-pointer text-white hover:text-white/60">
                     <div className="min-w-8 min-h-8 flex justify-center items-center">
