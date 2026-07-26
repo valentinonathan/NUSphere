@@ -101,6 +101,10 @@ NUSphere follows a `Feature Branching Strategy`, where each new feature or bug f
 ![Thread Reply](./screenshots/Thread.png)
 ## Create Thread
 ![Create Thread](./screenshots/Create-thread.png)
+## Marketplace
+![Marketplace](./screenshots/marketplace.png)
+## Market Product
+![Market Product](./screenshots/product.png)
 <br>
 <br>
 # NUSphere Backend
