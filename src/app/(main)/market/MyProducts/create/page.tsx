@@ -164,7 +164,7 @@ export default function ListingImageUpload() {
         throw new Error(data.message || "Failed to create listing");
       }
 
-      router.push("/market");
+      router.push("/market/MyProducts");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {

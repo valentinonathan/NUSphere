@@ -4,6 +4,7 @@ import ProductCard from "./ProductCard"
 import { ProductCardType, ApiResponse, Listing } from "../page"
 import { useEffect, useMemo, useState } from "react"
 import { fetchBackendClient } from "@/utils/fetch-backend-client"
+import Link from "next/link"
 
 const Page = () => {
   const [productCards, setProductCards] = useState<ProductCardType[]>([])
@@ -53,6 +54,7 @@ const Page = () => {
 
   return (
     <div className="w-full">
+
       <div className="mb-4 flex items-center gap-3">
         <p>{String(filteredCards.length)} items</p>
 
@@ -67,6 +69,13 @@ const Page = () => {
             </option>
           ))}
         </select>
+
+        <Link
+          href="/market/MyProducts/create"
+          className="inline-flex items-center justify-center rounded-md bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600"
+        >
+          Create Listing
+        </Link>
       </div>
 
       {loading && <p>Loading</p>}

@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { fetchBackendClient } from "@/utils/fetch-backend-client";
 import type { ApiResponse, Listing } from "../../page";
+import { useRouter } from "next/navigation";
 
 export type MarketConversation = {
   conversation_id: number;
@@ -21,6 +22,34 @@ export default function Page() {
   const [marketConversations, setMarketConversations] = useState<MarketConversation[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
+
+  const router = useRouter();
+  const handleDelete = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const response = await fetchBackendClient<ApiResponse<Listing>>(
+        `/market/${rawId}`,
+        "DELETE"
+      );
+
+      if (response.message) {
+        throw new Error(response.message);
+      }
+
+      // Remove the deleted listing from the UI
+      setProduct(null);
+
+      // or redirect back to My Products
+      router.push("/market/MyProducts");
+
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed to delete listing"
+      );
+    }
+  };
 
   useEffect(() => {
     if (!productId) return;
@@ -201,14 +230,21 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            {/* <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
                 href={`/chat?receiver=${encodeURIComponent(product.seller_username)}&listingId=${product.id}&sellerId=${product.seller_id}`}
                 className="rounded-md bg-white/20 px-5 py-3 text-center font-semibold text-zinc-900 transition hover:opacity-90"
               >
                 Contact Seller
               </Link>
-            </div>
+            </div> */}
+            <form onSubmit={handleDelete}>
+              <button type="submit">
+                <div className="w-fit rounded-md bg-red-500 px-3 py-2 text-sm font-semibold text-white">
+                  Unsubmit
+                </div>
+              </button>
+            </form>
           </section>
           <section className="rounded-md shadow-md shadow-black/10 bg-linear-to-r from-primary/50 via-secondary/50 to-secondary/50 p-6">
             <h2 className="mb-4 text-2xl font-semibold text-white">

@@ -90,6 +90,13 @@ const Page = () => {
             </option>
           ))}
         </select>
+
+        <Link
+          href="/market/MyProducts/"
+          className="inline-flex items-center justify-center rounded-md bg-pink-500 px-4 py-2 text-sm font-semibold text-white hover:bg-pink-600"
+        >
+          MyProducts
+        </Link>
       </div>
 
       {loading && <p>Loading</p>}
