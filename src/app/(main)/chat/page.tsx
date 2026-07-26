@@ -58,17 +58,32 @@ export default function ChatPage() {
         const receiverFromQuery = params.get("receiver") ?? "";
         const listingIdFromQuery = params.get("listingId");
         const sellerIdFromQuery = params.get("sellerId");
+        // setConversationId(Number(params.get("conversationId")) ?? null);
+
+        // if (receiverFromQuery && listingIdFromQuery && sellerIdFromQuery) {
+        //     setHasAutoStarted(true);
+        // }
+
+        // if (conversationId) {
+        //     setHasAutoStarted(true);
+        // }
 
         if (receiverFromQuery) {
-            setReceiver(receiverFromQuery);
-            setHasAutoStarted(true);
+            setReceiver(receiverFromQuery);   
         }
+
         if (listingIdFromQuery) {
             setListingId(Number(listingIdFromQuery));
         }
+
         if (sellerIdFromQuery) {
             setSellerId(Number(sellerIdFromQuery));
         }
+
+        if (receiverFromQuery) {
+            setHasAutoStarted(true);
+        }
+
     }, []);
 
     useEffect(() => {
