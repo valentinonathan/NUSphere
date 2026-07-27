@@ -269,7 +269,7 @@ export default function Page() {
                     </div>
 
                     <Link
-                      href={`/chat?receiver=${conversation.buyer_username}`}
+                      href={`/chat?receiver=${conversation.buyer_username}&listingId=${productId}`}
                       className="rounded-md bg-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/30"
                     >
                       Open Chat
