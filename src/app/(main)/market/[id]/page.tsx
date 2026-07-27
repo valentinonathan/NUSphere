@@ -110,10 +110,6 @@ export default function Page() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <section className="rounded-md shadow-md shadow-black/10 bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100%">
-
-          </section>
-
           <section className="rounded-md shadow-md shadow-black/10 bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% p-6 md:p-8">
             <div className="w-64 h-64 overflow-hidden">
               <img
