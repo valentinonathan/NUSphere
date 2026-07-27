@@ -48,7 +48,7 @@ export default function Page() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-zinc-950 p-4 text-white md:p-8">
+      <main className="min-h-screen p-4 text-white md:p-8">
         <div className="mx-auto max-w-6xl animate-pulse">
           <div className="mb-6 h-6 w-24 rounded bg-white/10" />
           <div className="grid gap-6 md:grid-cols-2">
@@ -67,7 +67,7 @@ export default function Page() {
 
   if (errorMessage) {
     return (
-      <main className="min-h-screen bg-zinc-950 p-4 text-white md:p-8">
+      <main className="min-h-screen p-4 text-white md:p-8">
         <div className="mx-auto max-w-3xl rounded-md border border-red-500/30 bg-red-500/10 p-6 shadow-md shadow-black/10">
           <p className="text-red-300">{errorMessage}</p>
           <Link
@@ -83,7 +83,7 @@ export default function Page() {
 
   if (!product) {
     return (
-      <main className="min-h-screen bg-zinc-950 p-4 text-white md:p-8">
+      <main className="min-h-screen p-4 text-white md:p-8">
         <div className="mx-auto max-w-3xl rounded-md shadow-md shadow-black/10 bg-linear-to-r from-primary/50 from-0% via-secondary/50 via-110% to-secondary/50 to-100% p-6">
           <p className="text-white/90">No product found.</p>
           <Link
@@ -98,7 +98,7 @@ export default function Page() {
   }
 
   return (
-    <main className="min-h-screen bg-zinc-950 p-4 text-white md:p-8">
+    <main className="min-h-screen p-4 text-white md:p-8">
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
           <Link
