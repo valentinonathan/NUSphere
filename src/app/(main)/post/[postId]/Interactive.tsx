@@ -64,7 +64,8 @@ export default function Interactive({imageUrl, likesCount, commentsCount, postId
             user_id: number,
             content: string,
             first_name: string,
-            last_name: string
+            last_name: string,
+            pfp_url: string
         }
         type postCommentData = {
             message: string,
@@ -76,7 +77,7 @@ export default function Interactive({imageUrl, likesCount, commentsCount, postId
         if (postCommentData?.message != undefined && postCommentData.message == "Comment successfully posted") {
             const commentReturn: postComment = postCommentData?.comment;
             const commentState: commentData = {id: commentReturn?.id, post_id: commentReturn?.post_id, 
-                user_id: commentReturn?.user_id, content: commentReturn?.content, first_name: commentReturn?.first_name, last_name: commentReturn?.last_name, pfp_url: imageUrl};
+                user_id: commentReturn?.user_id, content: commentReturn?.content, first_name: commentReturn?.first_name, last_name: commentReturn?.last_name, pfp_url: commentReturn?.pfp_url};
 
             if (textAreaRef?.current?.value != undefined) {
                 textAreaRef.current.value = "";

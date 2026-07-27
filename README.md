@@ -31,7 +31,7 @@ Users can create listings for new or used everyday university items on the marke
 Users can join dedicated discussion spaces for each module to ask questions, share notes, and discuss lectures, tutorials, and exams with others taking the same course.
 
 ## Timeline
-Feature 5, 6, 7 will be completed by Milestone 3 or Splashdown.
+Final UI/UX Polishing and proper backend logic refurnishing will be done before Splashdown.
 
 ## Tech Stack
 1. Frontend: Next.js/React deployed with Vercel
@@ -93,14 +93,230 @@ NUSphere follows a `Feature Branching Strategy`, where each new feature or bug f
 ![Create Event Page](./screenshots/Create-events.png)
 ### Event Attendance
 ![Event Attendance Page](./screenshots/events-attendance.png)
+## Modules Page
+![Modules Page](./screenshots/Modules-page.png)
+## Modules Thread Page
+![Modules Thread Page](./screenshots/Module-thread.png)
+## Thread Reply
+![Thread Reply](./screenshots/Thread.png)
+## Create Thread
+![Create Thread](./screenshots/Create-thread.png)
+## Marketplace
+![Marketplace](./screenshots/marketplace.png)
+## Market Product
+![Market Product](./screenshots/product.png)
+<br>
+<br>
+# NUSphere Backend
+
+## Folder structure
+
+```text
+src/
+  app.js                 # Express app setup and route mounting
+  server.js              # Application entry point
+  controllers/           # Request handlers for each feature
+  middleware/            # Validation and auth middleware
+  routes/                # API route definitions
+  services/              # Business logic for each feature
+  db/                    # Database connection setup
+  utils/                 # Shared helper functions
+  socket/                # Socket.IO-related code
+tests/                   # Test files and test helpers
+```
+
+## API documentation
+
+All protected endpoints require a valid authentication token in the request cookie unless noted otherwise.
+
+### Authentication
+- POST /auth/login: Log in a user with a username and password.
+- POST /auth/signup/create-account: Create a new account.
+- POST /auth/signup/edit-account-details: Save additional profile details for the authenticated user.
+
+### Users
+- GET /users/username/:username: Get a user profile by username.
+- GET /users/id/:userId: Get a user profile by user ID.
+- GET /users: Search or query users.
+
+### Posts
+- POST /posts: Create a new post with an image and optional caption.
+- GET /posts/feed: Get the feed of posts for the authenticated user.
+- GET /posts/username/:username: Get posts created by a specific username.
+- GET /posts/id/:userId: Get posts created by a specific user ID.
+- GET /posts/:postId: Get details for one post.
+- POST /posts/:postId/likes: Like a post.
+- GET /posts/:postId/likes: Check whether the current user liked a post.
+
+### Comments
+- GET /comments/:postId: Get comments for a specific post.
+- POST /comments/:postId: Add a comment to a post.
+
+### Events
+- POST /events: Create a new event with image and event details.
+- GET /events: Get a list of events.
+- GET /events/:id: Get details for one event.
+
+### Event attendance
+- GET /events/:id/attendance: Get attendance info for an event.
+- POST /events/:id/attendance: Register the current user for an event.
+- DELETE /events/:id/attendance: Remove the current user from an event.
+
+### Friend requests
+- GET /friend-requests: Get incoming friend requests.
+- DELETE /friend-requests/:senderId: Reject or remove a friend request.
+- POST /friend-requests/:receiverId: Send, accept, or manage a friend request.
+- GET /friend-requests/:receiverId: Check the current friend request status with a user.
+
+### Conversations
+- POST /conversations: Create or retrieve a conversation between users.
+
+### Modules
+- GET /modules/my: Get modules for the current user.
+- GET /modules/feed: Get module feed content.
+- GET /modules/:moduleCode: Get module information.
+- GET /modules/:moduleCode/threads: Get discussion threads for a module.
+- POST /modules/:moduleCode/threads: Create a thread in a module.
+- POST /modules/:moduleCode/threads/:threadId/replies: Add a reply to a thread.
+- GET /modules/:moduleCode/threads/:threadId/replies: Get replies for a thread.
+- POST /modules/:moduleCode/threads/:threadId/upvote: Upvote a thread.
+- POST /modules/:moduleCode/threads/:threadId/downvote: Downvote a thread.
+- DELETE /modules/:moduleCode/threads/:threadId/upvote: Remove an upvote.
+- DELETE /modules/:moduleCode/threads/:threadId/downvote: Remove a downvote.
+- POST /modules/:moduleCode/threads/:threadId/replies/:replyId/upvote: Upvote a reply.
+- DELETE /modules/:moduleCode/threads/:threadId/replies/:replyId/upvote: Remove a reply upvote.
+- POST /modules/:moduleCode/threads/:threadId/replies/:replyId/downvote: Downvote a reply.
+- DELETE /modules/:moduleCode/threads/:threadId/replies/:replyId/downvote: Remove a reply downvote.
+- POST /modules/:moduleCode/attendance: Mark attendance for a module.
+- GET /modules/:moduleCode/attendance: Get attendance for a module.
+- DELETE /modules/:moduleCode/attendance: Remove attendance for a module.
+
+## Database Documentation
+
+### Table: categories
+This table stores category labels that can be assigned to marketplace listings. It provides a simple reference list that supports the listings domain and helps keep category values consistent.
+
+### Table: comments
+This table stores comments made on posts. It links user-generated discussion content to both the relevant post and the commenting user.
+
+### Table: conversation_members
+This table records which users belong to each conversation and their membership role. It supports multi-user conversation membership rather than storing members only as a pair of participants.
+
+### Table: conversations
+This table stores direct conversations between two users. It defines the basic relationship between participants and prevents duplicate one-to-one conversation records.
+
+### Table: events
+This table stores event information created by users. It acts as the main record for an event and holds metadata such as title, description, location, timing, and a public URL.
+
+### Table: events_attendance
+This table records which users are attending which events. It is a join table that connects users to events in a many-to-many relationship.
+
+### Table: friend_requests
+This table stores potential friendship requests between users. It captures the sender, receiver, and the time the request was created.
+
+### Table: friends
+This table stores confirmed friendships between users. It uses a constrained pair representation so each friendship is recorded only once in a canonical order.
+
+### Table: likes
+This table records which users have liked which posts. It is a join table that captures the user-post interaction for likes.
+
+### Table: listings
+This table stores marketplace listings offered by sellers. It contains listing metadata and a status field that can be used to track whether an item is available, reserved, sold, or cancelled.
+
+### Table: market_conversations
+This table links marketplace conversations to specific listings. It helps model the relationship between a conversation and the listing being discussed within that conversation.
+
+### Table: messages
+This table stores individual messages sent inside conversations. It contains the message body, sender, and metadata needed to reconstruct conversation history.
+
+### Table: modules
+This table stores module records that group discussion threads and attendance. It provides a stable identifier and title for each module entry.
+
+### Table: modules_attendance
+This table records which users are attending which modules. It is a many-to-many association table between users and modules.
+
+### Table: posts
+This table stores posts created by users. It holds a media URL, caption, and counters that appear to track likes and comments attached to the post.
+
+### Table: replies
+This table stores replies made within discussion threads. It supports nested replies by allowing a reply to reference another reply, while also relating each reply to a user, module, and thread.
+
+### Table: reply_downvote
+This table records when a user downvotes a reply. It is a join table that links users to the replies they have downvoted.
+
+### Table: reply_upvote
+This table records when a user upvotes a reply. It is a join table that links users to the replies they have upvoted.
+
+### Table: reservation_requests
+This table records buyer requests for a listing and associates those requests with a conversation. It provides a workflow state for marketplace reservation requests.
+
+### Table: reservations
+This table represents active or historical reservations created from reservation requests. It tracks the reservation lifecycle and expiry time for a listing transaction.
+
+### Table: test
+This table appears to be a minimal placeholder table with no relationships or additional constraints. Its purpose is not defined beyond the schema itself.
+
+### Table: thread_upvote
+This table records when a user upvotes a discussion thread. It is a join table that links users to threads they upvoted.
+
+### Table: threads
+This table stores discussion threads within modules. It holds the thread content and supporting metadata such as category, week, and vote counters.
+
+### Table: users
+This table stores core user account information, including profile fields and authentication-related values. It forms the central entity for many of the other tables in the schema.
 
 ## Testing
+### Integration Testing (Jest + Supertest)
+
+#### Overview
+
+This test suite exercises the Express application through real HTTP requests using Supertest. The tests target the actual route, middleware, controller, database, and response flow without starting a real network server.
+
+#### Test strategy
+
+- Each test uses the Express app directly via Supertest.
+- The suite uses the dedicated test database connection from TEST_DATABASE_URL.
+- The database is reset before each test to keep the suite isolated and deterministic.
+- The tests verify both the HTTP response and the database state after each request.
+
+#### Covered areas
+
+| Area | Endpoint(s) | What is tested |
+| --- | --- | --- |
+| Authentication | POST /auth/login, POST /auth/signup/create-account | Successful login, unknown-user failure, malformed request handling, DB persistence for account creation |
+| Users | GET /users/:id, GET /users/username/:username | Authentication enforcement, successful profile lookup |
+| Posts | POST /posts | Successful post creation, invalid input without image |
+| Comments | POST /comments/:postId | Successful comment creation, missing comment validation |
+| Events | POST /events | Successful event creation, missing required fields |
+| Friend requests | POST /friend-requests/:receiverId | Successful request creation, invalid action handling |
+| Modules | POST /modules/:moduleCode/attendance | Successful attendance tracking, unknown module failure |
+
+#### Current status
+
+The suite was executed successfully against the test database.
+
+| Test file | Status |
+| --- | --- |
+| tests/auth.api.test.js | Passing |
+| tests/user.api.test.js | Passing |
+| tests/post.api.test.js | Passing |
+| tests/comment.api.test.js | Passing |
+| tests/event.api.test.js | Passing |
+| tests/friend.api.test.js | Passing |
+| tests/module.api.test.js | Passing |
+
+Test Suites: 7 passed, 7 total
+Tests:       16 passed, 16 total
+Snapshots:   0 total
+Time:        12.932 s
+
+
 ### Unit Testing
 For unit testing, Vitest was used to verify the business logic implemented in the backend. The test cases focused on validating individual service-layer functions in isolation by mocking database interactions, ensuring that the core application logic behaved correctly under both normal and exceptional conditions. 
 
 A total of 82 unit tests were executed across 31 test suites, with all tests passing successfully. These tests covered key backend functionalities, including user authentication, event management, conversations, comments, posts, friend requests, and user services.
 
-### Summary
+#### Summary
 
 | Metric | Result |
 |--------|--------|
@@ -110,7 +326,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### auth.service.test.js
+#### auth.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -125,7 +341,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### comment.service.test.js
+#### comment.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -138,7 +354,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### conversation.service.test.js
+#### conversation.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -157,7 +373,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### event.attendance.service.test.js
+#### event.attendance.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -173,7 +389,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### event.service.test.js
+#### event.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -184,7 +400,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### friendRequests.services.test.js
+#### friendRequests.services.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -209,7 +425,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### post.service.test.js
+#### post.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
@@ -233,7 +449,7 @@ A total of 82 unit tests were executed across 31 test suites, with all tests pas
 
 ---
 
-### user.service.test.js
+#### user.service.test.js
 
 | Test Case | Status | Duration |
 |-----------|--------|----------|
