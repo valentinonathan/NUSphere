@@ -55,10 +55,10 @@ export default function PostInteractive({likesCount, commentsCount, postId, hasL
             </div>
         </div>
         
-        <div className="ml-2 flex gap-2">
+        {/* <div className="ml-2 flex gap-2">
             <GroupAvatar />
             <p className="text-sm">Liked by Calvin Yoel and 100k others</p>
-        </div>
+        </div> */}
 
         <div className="px-2 max-w-full">
             <h3 className="font-semibold inline">{firstName} {lastName}</h3>

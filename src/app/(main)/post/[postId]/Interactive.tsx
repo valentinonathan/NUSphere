@@ -128,10 +128,10 @@ export default function Interactive({imageUrl, likesCount, commentsCount, postId
                     <IoSend className="text-[165%]"/>
                 </div>
             </div>
-            <div className="ml-2 flex gap-2">
+            {/* <div className="ml-2 flex gap-2">
                 <GroupAvatar />
                 <p className="text-sm">Liked by Calvin Yoel and 100k others</p>
-            </div>
+            </div> */}
             <textarea onKeyDown={(e) => {if (e.key === "Enter") {e.preventDefault(); handlePostComment();}}} ref={textAreaRef} placeholder="Add a comment..." className="min-w-full flex-1 ml-2 focus:outline-0 resize-none" />
         </div>
         </>

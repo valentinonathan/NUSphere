@@ -25,7 +25,7 @@ export default async function Navbar() {
                 <h1 className="font-momo text-2xl text-white">NUSphere</h1>
             </div>
             <div >
-                <Search />
+                {/* <Search /> */}
             </div>
             <div className="flex h-11 gap-4.5 items-center">
                 {
